@@ -1,359 +1,202 @@
 const APP_DATA = {
-  nav: [
-    { id: 'dashboard', label: 'Dashboard' },
-    { id: 'roadmap', label: 'Roadmap' },
-    { id: 'aptitude', label: 'Analytical Aptitude' },
-    { id: 'logic', label: 'Logical Reasoning' },
-    { id: 'technical', label: 'C++ / Python / Perl' },
-    { id: 'flashcards', label: 'Flashcards' },
-    { id: 'mock-tests', label: 'Mock Tests' },
-    { id: 'videos', label: 'Videos' },
-    { id: 'resume', label: 'Resume Strategy' },
-    { id: 'hr', label: 'HR & Soft Skills' },
-    { id: 'tasks', label: 'Tasks & Tracker' },
-    { id: 'company', label: 'Company Readiness' }
+  modules: [
+    { title: 'Analytical', desc: 'Quant concepts, speed, formulas, and practice.' },
+    { title: 'Logical', desc: 'Patterns, reasoning, puzzles, and elimination skills.' },
+    { title: 'Technical', desc: 'C++, Python, Perl, coding interview readiness.' },
+    { title: 'Flashcards', desc: 'Fast revision for concepts, syntax, and HR cues.' },
+    { title: 'Mock Tests', desc: 'Timed-style practice with scoring and explanations.' },
+    { title: 'Resume', desc: 'ATS-friendly resume upgrades and project bullets.' },
+    { title: 'HR Prep', desc: 'Tell-me-about-yourself, strengths, teamwork, conflict.' },
+    { title: 'Company Tests', desc: 'Service, product, and startup-style mini rounds.' }
+  ],
+  todayFocus: [
+    'Solve 10 aptitude problems with timer.',
+    'Revise 8 flashcards from Python and HR.',
+    'Practice 2 coding problems in C++ or Python.',
+    'Improve one project bullet in your resume.',
+    'Record a 60-second self-introduction.'
   ],
   roadmap: [
-    {
-      week: 'Week 1',
-      title: 'Foundation + Resume Reset',
-      focus: 'Self-introduction, resume rewrite, percentages, ratios, Python basics',
-      tasks: ['Draft one-page resume', 'Solve 20 aptitude questions', 'Practice Python syntax and loops', 'Record 60-second intro']
-    },
-    {
-      week: 'Week 2',
-      title: 'Logic + C++ Fundamentals',
-      focus: 'Series, puzzles, C++ syntax, OOP basics, project storytelling',
-      tasks: ['Finish 3 logic topics', 'Revise C++ classes and pointers', 'Write project bullets with action verbs', 'Take mini mock 1']
-    },
-    {
-      week: 'Week 3',
-      title: 'Coding and Technical Depth',
-      focus: 'Arrays, strings, STL, Python collections, Perl regex and scripting',
-      tasks: ['Code 8 problems', 'Revise Python data structures', 'Learn Perl regex basics', 'Mock interview with friend']
-    },
-    {
-      week: 'Week 4',
-      title: 'Interview Simulation',
-      focus: 'Mixed mocks, HR answers, communication, company-style question sets',
-      tasks: ['Take full mock', 'Finalize resume', 'Prepare STAR stories', 'Practice 2 company mini-tests']
-    }
+    { week: 'Week 1', title: 'Foundation Reset', points: ['Resume cleanup', 'Aptitude formulas', 'C++ syntax refresh', 'Self-introduction draft'] },
+    { week: 'Week 2', title: 'Coding Fluency', points: ['Python core structures', 'Arrays and strings', 'Practice easy coding questions', 'Logical reasoning drills'] },
+    { week: 'Week 3', title: 'Interview Core', points: ['OOP concepts', 'STL and Python collections', 'Project explanation practice', 'HR question bank'] },
+    { week: 'Week 4', title: 'Mock Intensive', points: ['Mixed technical quizzes', 'Aptitude mock', 'Behavioral response refinement', 'Resume bullet polishing'] },
+    { week: 'Week 5', title: 'Company Targeting', points: ['Service company prep', 'Product-style questions', 'Timed mini tests', 'Common coding patterns'] },
+    { week: 'Week 6', title: 'Final Sprint', points: ['Mock interviews', 'Weak-area fixes', 'Interview day checklist', 'Confidence rehearsal'] }
   ],
-  aptitudeTopics: [
-    {
-      title: 'Percentages & Ratios',
-      summary: 'Core campus placement math used in pricing, growth, and comparison questions.',
-      formulas: ['x% of y = (x/100) × y', 'If A:B = m:n, then A = mk and B = nk', '% increase = (increase/original) × 100'],
-      tips: ['Convert to fractions for speed', 'Use base 100 thinking', 'Practice mental math shortcuts']
-    },
-    {
-      title: 'Profit, Loss & Discount',
-      summary: 'Tests business math and numerical confidence under time pressure.',
-      formulas: ['Profit% = (profit/CP) × 100', 'Loss% = (loss/CP) × 100', 'SP = CP × (100 ± p)/100'],
-      tips: ['Track CP, SP, MP carefully', 'Beware of successive discount traps', 'Use unitary method for sanity check']
-    },
-    {
-      title: 'Time, Work & Speed',
-      summary: 'Frequent in service-company aptitude rounds.',
-      formulas: ['Work = rate × time', 'If A finishes in x days, rate = 1/x', 'Speed = distance/time'],
-      tips: ['Convert workers to rates', 'Use LCM for combined work', 'Draw simple tables']
-    },
-    {
-      title: 'Probability & Counting',
-      summary: 'Basic interview-friendly probability and arrangement questions.',
-      formulas: ['P(E) = favorable/total', 'nPr = n!/(n-r)!', 'nCr = n!/(r!(n-r)!)'],
-      tips: ['List sample space first', 'Check repetition rule', 'Count complement when easier']
-    }
+  analyticalConcepts: [
+    { title: 'Percentages', content: 'Percentage = (Part / Whole) × 100. Interview use: discounts, score comparisons, salary hike, profit and loss.' },
+    { title: 'Profit & Loss', content: 'Profit = SP - CP. Loss = CP - SP. Profit % = Profit/CP × 100. Common interview twist: marked price and discount combinations.' },
+    { title: 'Time & Work', content: 'If A completes work in x days, one day work = 1/x. Together add efficiencies. Common test trick: work remaining or partial attendance.' },
+    { title: 'Time Speed Distance', content: 'Distance = Speed × Time. Relative speed is key for trains, meeting points, and opposite-direction movement.' },
+    { title: 'Ratio & Proportion', content: 'Use ratios to compare parts. For distribution problems, convert ratios into total parts first.' },
+    { title: 'Probability', content: 'Probability = favorable outcomes / total outcomes. Watch for independent events and complementary cases.' }
   ],
-  logicTopics: [
-    {
-      title: 'Number Series',
-      patterns: ['Arithmetic gaps', 'Squares/cubes', 'Alternate patterns', 'Prime-based jumps'],
-      practice: 'Look for second differences, multiplication shifts, and alternating positions.'
-    },
-    {
-      title: 'Coding-Decoding',
-      patterns: ['Letter shifts', 'Symbol substitution', 'Position-based rules'],
-      practice: 'Write A=1, B=2 quickly and test one-letter hypothesis first.'
-    },
-    {
-      title: 'Syllogisms & Conclusions',
-      patterns: ['All / some / none mapping', 'Venn diagram elimination'],
-      practice: 'Convert statements into circles before evaluating conclusions.'
-    },
-    {
-      title: 'Seating & Arrangement',
-      patterns: ['Linear arrangement', 'Circular arrangement', 'Conditional neighbor rules'],
-      practice: 'Use slots and deduce fixed anchors early.'
-    }
+  formulas: [
+    { topic: 'Percentage Change', formula: '((new - old) / old) × 100' },
+    { topic: 'Profit %', formula: '(profit / cost price) × 100' },
+    { topic: 'Average', formula: 'sum of observations / number of observations' },
+    { topic: 'Simple Interest', formula: '(P × R × T) / 100' },
+    { topic: 'Compound Amount', formula: 'P(1 + R/100)^T' },
+    { topic: 'Work Together', formula: '1/T = 1/A + 1/B + ...' },
+    { topic: 'Relative Speed', formula: 'sum for opposite, difference for same direction' },
+    { topic: 'Probability', formula: 'favorable / total' }
   ],
-  technicalTracks: {
+  logicalPacks: [
+    { title: 'Number Series', desc: 'Detect arithmetic, geometric, alternating, and square/cube patterns.' },
+    { title: 'Coding-Decoding', desc: 'Master letter shifts, replacement maps, and symbolic logic.' },
+    { title: 'Blood Relations', desc: 'Use family trees and direction of relation words carefully.' },
+    { title: 'Seating Arrangement', desc: 'Linear and circular arrangement clues using elimination tables.' },
+    { title: 'Syllogisms', desc: 'Practice all/some/no cases with Venn diagram thinking.' },
+    { title: 'Statement & Conclusion', desc: 'Differentiate assumption, inference, and valid conclusion.' },
+    { title: 'Direction Sense', desc: 'Track turns and final displacement step by step.' },
+    { title: 'Puzzle Logic', desc: 'Multi-condition elimination for ranking, schedule, and mapping questions.' }
+  ],
+  tech: {
     cpp: {
-      title: 'C++ Interview Track',
-      modules: ['Syntax & data types', 'Functions and recursion', 'Pointers & references', 'OOP and inheritance', 'STL: vector, map, stack, queue', 'Memory management', 'Exception handling'],
-      quickQuestions: [
-        'What is the difference between pointer and reference?',
-        'Why is virtual destructor important?',
-        'When would you use vector instead of array?',
-        'Explain pass by value vs reference.'
+      title: 'C++ Interview Prep',
+      sections: [
+        { heading: 'Core Topics', items: ['Variables, data types, operators', 'Functions and recursion', 'Pointers and references', 'Arrays, strings, vectors', 'OOP: encapsulation, inheritance, polymorphism', 'STL basics: vector, map, set, stack, queue'] },
+        { heading: 'Interview Favorites', items: ['Difference between class and struct', 'Virtual functions and runtime polymorphism', 'Memory management and RAII basics', 'Call by value vs reference', 'Const correctness', 'Time complexity of common STL operations'] },
+        { heading: 'Practice Tasks', items: ['Reverse a string', 'Check palindrome', 'Frequency map', 'Second largest element', 'Two-sum style problem', 'Simple class-based mini project'] }
       ]
     },
     python: {
-      title: 'Python Interview Track',
-      modules: ['Data types', 'Functions & lambda', 'Lists, tuples, sets, dicts', 'OOP basics', 'File handling', 'Exception handling', 'Iterators and generators'],
-      quickQuestions: [
-        'List vs tuple?',
-        'What is a dictionary comprehension?',
-        'How does Python handle memory?',
-        'What is the use of __init__?'
+      title: 'Python Interview Prep',
+      sections: [
+        { heading: 'Core Topics', items: ['Lists, tuples, sets, dictionaries', 'Functions and lambda', 'Comprehensions', 'OOP and dunder basics', 'File handling', 'Exception handling'] },
+        { heading: 'Interview Favorites', items: ['List vs tuple', 'Deep copy vs shallow copy', 'Mutable vs immutable', 'Generators and iterators', 'Decorators basics', 'Why Python is productive for scripting and automation'] },
+        { heading: 'Practice Tasks', items: ['Word counter', 'Anagram checker', 'CSV reader script', 'Basic class model', 'Frequency dictionary', 'Simple regex script'] }
       ]
     },
     perl: {
-      title: 'Perl Interview Track',
-      modules: ['Scalars, arrays, hashes', 'String handling', 'Regular expressions', 'File operations', 'Scripting habits', 'Command-line automation'],
-      quickQuestions: [
-        'What are scalars, arrays, and hashes?',
-        'How is Perl strong for regex-heavy scripting?',
-        'How do you open and read a file in Perl?',
-        'What does chomp do?'
+      title: 'Perl Interview Prep',
+      sections: [
+        { heading: 'Core Topics', items: ['Scalars, arrays, hashes', 'Control flow and loops', 'Subroutines', 'Regular expressions', 'File handling', 'Command-line scripting'] },
+        { heading: 'Interview Favorites', items: ['Use cases for Perl in legacy automation', 'Regex power in text processing', 'Difference between scalar and list context', 'Hashes and key lookup', 'Basic script debugging approach'] },
+        { heading: 'Practice Tasks', items: ['Log parser', 'Pattern matcher', 'File line counter', 'Simple report generator', 'Config text extractor'] }
       ]
     }
   },
   flashcards: [
-    { category: 'C++', front: 'What is polymorphism?', back: 'The ability of one interface to represent many forms. In C++, it is often achieved through inheritance and virtual functions.' },
-    { category: 'Python', front: 'What is a list comprehension?', back: 'A compact way to create lists using an expression with optional filtering, such as [x*x for x in nums if x%2==0].' },
-    { category: 'Perl', front: 'What is a hash in Perl?', back: 'A key-value data structure similar to a dictionary or map.' },
-    { category: 'Aptitude', front: 'Successive discounts of 10% and 20% result in?', back: 'Net discount = 1 - (0.9 × 0.8) = 28%.' },
-    { category: 'Resume', front: 'Weak bullet: Worked on website', back: 'Strong bullet: Built a responsive placement portal using HTML, CSS, and JS, reducing manual navigation time for students.' },
-    { category: 'HR', front: 'Best structure for “Tell me about yourself”', back: 'Present → past → strengths → role fit. Keep it around 60–90 seconds.' },
-    { category: 'Logic', front: 'First step in syllogism questions?', back: 'Convert statements into a quick Venn diagram or relation sketch.' },
-    { category: 'Interview', front: 'Best answer style for project questions?', back: 'Problem, your role, technologies, measurable outcome, and what you learned.' }
+    { cat: 'C++', q: 'What is polymorphism in C++?', a: 'Polymorphism allows the same interface to represent different underlying forms. In interviews, mention compile-time and runtime polymorphism.' },
+    { cat: 'C++', q: 'What is a pointer?', a: 'A pointer stores the memory address of another variable. It enables dynamic memory work and efficient parameter passing.' },
+    { cat: 'Python', q: 'Difference between list and tuple?', a: 'Lists are mutable; tuples are immutable. Tuples can be safer and slightly lighter for fixed collections.' },
+    { cat: 'Python', q: 'What is a dictionary?', a: 'A key-value data structure with near constant-time lookup in common cases.' },
+    { cat: 'Perl', q: 'What is a hash in Perl?', a: 'A hash is an associative array mapping keys to values, commonly used for quick lookups.' },
+    { cat: 'Aptitude', q: 'Average of first n natural numbers?', a: 'n(n+1)/2 divided by n, which simplifies to (n+1)/2.' },
+    { cat: 'Aptitude', q: 'If successive discounts are 10% and 20%, is total discount 30%?', a: 'No. Combined discount = a + b - ab/100 = 28%.' },
+    { cat: 'HR', q: 'Best structure for “Tell me about yourself”?', a: 'Present, past, future: current profile, relevant academic/project background, then why this role fits your direction.' },
+    { cat: 'Resume', q: 'How should a project bullet read?', a: 'Action + tool/tech + measurable outcome. Example: Built a Flask dashboard reducing report generation time by 40%.' },
+    { cat: 'Logical', q: 'How do you solve seating arrangement faster?', a: 'Start with fixed or absolute clues, place extremes, then use elimination tables for uncertain positions.' }
   ],
-  quizzes: {
-    aptitude: [
-      {
-        q: 'A number is increased by 25% and then decreased by 20%. What is the net change?',
-        options: ['0%', '5% increase', '5% decrease', '10% increase'],
-        answer: 0,
-        explanation: '1.25 × 0.80 = 1.00, so there is no net change.'
-      },
-      {
-        q: 'The ratio of boys to girls is 3:2. If there are 30 boys, how many girls are there?',
-        options: ['18', '20', '24', '30'],
-        answer: 1,
-        explanation: 'If 3 parts = 30, then 1 part = 10. Girls = 2 parts = 20.'
-      },
-      {
-        q: 'A man can finish a work in 12 days. How much work does he finish in 3 days?',
-        options: ['1/2', '1/3', '1/4', '1/6'],
-        answer: 2,
-        explanation: 'Daily rate is 1/12, so in 3 days work done = 3/12 = 1/4.'
-      }
-    ],
-    logic: [
-      {
-        q: 'Find the next number: 2, 6, 12, 20, 30, ?',
-        options: ['36', '40', '42', '44'],
-        answer: 2,
-        explanation: 'Pattern is n(n+1): 1×2, 2×3, 3×4, 4×5, 5×6, so next is 6×7 = 42.'
-      },
-      {
-        q: 'If CAT = DBU, then DOG = ?',
-        options: ['EPH', 'FPH', 'EPG', 'EOH'],
-        answer: 0,
-        explanation: 'Each letter shifts by +1: D→E, O→P, G→H.'
-      },
-      {
-        q: 'All coders are problem solvers. Some problem solvers are gamers. Which conclusion is definitely true?',
-        options: ['All gamers are coders', 'Some coders are gamers', 'Some problem solvers may be gamers', 'No coder is gamer'],
-        answer: 2,
-        explanation: 'Only “some problem solvers are gamers” is given; anything stronger is not definite.'
-      }
-    ],
-    technical: [
-      {
-        q: 'Which C++ feature enables runtime polymorphism?',
-        options: ['Templates', 'Virtual functions', 'Operator overloading', 'Namespaces'],
-        answer: 1,
-        explanation: 'Virtual functions enable runtime polymorphism using dynamic dispatch.'
-      },
-      {
-        q: 'Which Python data structure stores unique unordered values?',
-        options: ['List', 'Tuple', 'Set', 'Dictionary'],
-        answer: 2,
-        explanation: 'A set stores unique unordered elements.'
-      },
-      {
-        q: 'In Perl, which symbol is used for a scalar variable?',
-        options: ['@', '$', '%', '&'],
-        answer: 1,
-        explanation: 'Scalars in Perl begin with $.'
-      }
-    ],
-    company: {
-      service: [
-        {
-          q: 'What is usually the biggest differentiator in service-company campus rounds?',
-          options: ['Patents', 'Aptitude speed + communication', 'Open-source followers', 'Competitive programming rating alone'],
-          answer: 1,
-          explanation: 'Large service-company rounds heavily reward aptitude speed, consistency, and spoken clarity.'
-        },
-        {
-          q: 'What should a fresher emphasize while explaining a project?',
-          options: ['Only tools used', 'Only team size', 'Problem, role, logic, and result', 'Only final grade'],
-          answer: 2,
-          explanation: 'Interviewers want ownership and clarity, not just tool names.'
-        },
-        {
-          q: 'Which is the best interview habit?',
-          options: ['Guess loudly', 'Interrupt the interviewer', 'Think aloud and structure answer', 'Memorize and recite'],
-          answer: 2,
-          explanation: 'Structured thinking matters more than speed alone.'
-        }
-      ],
-      product: [
-        {
-          q: 'For product-company fresher rounds, what matters more than surface syntax?',
-          options: ['Fancy resume color', 'Problem-solving and code clarity', 'Number of pages in resume', 'Using rare libraries'],
-          answer: 1,
-          explanation: 'Product companies weigh reasoning, DS/Algo basics, and code clarity heavily.'
-        },
-        {
-          q: 'Which answer is stronger for “Why Python here?”',
-          options: ['Because it is easy', 'Because everyone uses it', 'Because it enables faster prototyping and readable code for the given task', 'Because I saw it online'],
-          answer: 2,
-          explanation: 'Tie the language choice to task fit and engineering reasoning.'
-        },
-        {
-          q: 'What is a good first step before coding?',
-          options: ['Open editor immediately', 'Clarify input, constraints, and edge cases', 'Write final code in one go', 'Skip examples'],
-          answer: 1,
-          explanation: 'Strong candidates frame the problem before implementation.'
-        }
+  mockTests: [
+    {
+      id: 'mixed_fresher', title: 'Mixed Fresher Mock', desc: 'Balanced aptitude + coding + HR style quiz.', duration: '20 min',
+      questions: [
+        { q: 'If the cost price is 500 and selling price is 575, what is the profit %?', options: ['10%', '12%', '15%', '18%'], answer: '15%', explain: 'Profit = 75. 75/500 × 100 = 15%.' },
+        { q: 'Which Python data structure uses key-value pairs?', options: ['List', 'Tuple', 'Dictionary', 'Set'], answer: 'Dictionary', explain: 'Dictionary stores key-value mappings.' },
+        { q: 'Which concept allows one interface, many forms?', options: ['Inheritance', 'Abstraction', 'Polymorphism', 'Encapsulation'], answer: 'Polymorphism', explain: 'That is the standard definition of polymorphism.' },
+        { q: 'In a series 2, 6, 12, 20, 30, ?', options: ['36', '40', '42', '44'], answer: '42', explain: 'Differences are 4, 6, 8, 10, then 12.' },
+        { q: 'Best opening for a fresher self-introduction?', options: ['My family is...', 'My weaknesses are many', 'Brief intro + degree + project strengths', 'I need a job badly'], answer: 'Brief intro + degree + project strengths', explain: 'That is professional and role-relevant.' }
+      ]
+    },
+    {
+      id: 'python_focus', title: 'Python Focus Mock', desc: 'Python syntax, logic, and scripting basics.', duration: '15 min',
+      questions: [
+        { q: 'Which of these is mutable?', options: ['Tuple', 'String', 'List', 'Integer'], answer: 'List', explain: 'Lists can be modified after creation.' },
+        { q: 'What does try-except handle?', options: ['Loops', 'Exceptions', 'Imports', 'Comments'], answer: 'Exceptions', explain: 'Used for error handling.' },
+        { q: 'What is produced by x = [i*i for i in range(3)]?', options: ['[1,4,9]', '[0,1,4]', '[0,1,2]', '[1,2,3]'], answer: '[0,1,4]', explain: 'Squares of 0,1,2.' },
+        { q: 'Which structure avoids duplicate items?', options: ['List', 'Tuple', 'Set', 'Dictionary'], answer: 'Set', explain: 'Sets keep unique elements.' },
+        { q: 'Why mention Python in interviews?', options: ['Readable syntax and productivity', 'Because it is old', 'Only for web', 'No use in automation'], answer: 'Readable syntax and productivity', explain: 'This is a strong concise answer.' }
+      ]
+    },
+    {
+      id: 'aptitude_speed', title: 'Aptitude Speed Mock', desc: 'Quick quantitative reasoning for campus tests.', duration: '15 min',
+      questions: [
+        { q: 'Average of 10, 20, 30, 40?', options: ['20', '25', '30', '35'], answer: '25', explain: 'Sum 100 divided by 4.' },
+        { q: 'If A can finish work in 5 days, one-day work is:', options: ['1/2', '1/3', '1/5', '5'], answer: '1/5', explain: 'Standard efficiency approach.' },
+        { q: 'A train 100m long crosses a pole in 10s. Speed?', options: ['5 m/s', '10 m/s', '15 m/s', '20 m/s'], answer: '10 m/s', explain: 'Distance 100 / time 10.' },
+        { q: 'Ratio 2:3 means total parts are:', options: ['2', '3', '5', '6'], answer: '5', explain: '2 + 3 = 5 total parts.' },
+        { q: 'Probability can never be:', options: ['0', '0.4', '1', '1.5'], answer: '1.5', explain: 'Probability lies between 0 and 1.' }
       ]
     }
-  },
-  mockTests: [
-    { id: 'aptitude', title: 'Analytical Sprint', description: 'Timed aptitude-focused set for campus rounds.', category: 'Aptitude', count: 3 },
-    { id: 'logic', title: 'Logical Reasoning Drill', description: 'Series, coding-decoding, and syllogism mix.', category: 'Logical', count: 3 },
-    { id: 'technical', title: 'Technical Core Mock', description: 'C++, Python, and Perl basics in one scorecard.', category: 'Technical', count: 3 },
-    { id: 'service', title: 'Service Company Mini-Test', description: 'Interview style mix with aptitude and communication emphasis.', category: 'Company', count: 3 },
-    { id: 'product', title: 'Product Company Mini-Test', description: 'Problem-solving and technical reasoning focused.', category: 'Company', count: 3 }
   ],
   videos: [
-    {
-      title: 'C++ Full Course for Beginners',
-      tag: 'C++',
-      why: 'A strong refresh for syntax, OOP, STL, and coding basics before interviews.',
-      url: 'https://www.youtube.com/watch?v=vLnPwxZdW4Y',
-      embed: 'https://www.youtube.com/embed/vLnPwxZdW4Y'
-    },
-    {
-      title: 'Python Tutorial for Beginners',
-      tag: 'Python',
-      why: 'Good for fast revision of Python basics, functions, collections, and practical usage.',
-      url: 'https://www.youtube.com/watch?v=_uQrJ0TkZlc',
-      embed: 'https://www.youtube.com/embed/_uQrJ0TkZlc'
-    },
-    {
-      title: 'Perl Tutorial for Beginners',
-      tag: 'Perl',
-      why: 'Useful for scripting and regex revision when Perl appears in hardware, automation, or legacy stacks.',
-      url: 'https://www.youtube.com/watch?v=WEghIXs8F6c',
-      embed: 'https://www.youtube.com/embed/WEghIXs8F6c'
-    },
-    {
-      title: 'Aptitude Tricks and Shortcuts',
-      tag: 'Aptitude',
-      why: 'Improves speed in campus-placement arithmetic and time-pressure solving.',
-      url: 'https://www.youtube.com/watch?v=J3fCnfnY0Ow',
-      embed: 'https://www.youtube.com/embed/J3fCnfnY0Ow'
-    },
-    {
-      title: 'Tell Me About Yourself – Best Answer Strategy',
-      tag: 'HR',
-      why: 'Helps freshers structure a confident introduction and avoid vague answers.',
-      url: 'https://www.youtube.com/watch?v=Y95eI-ek_E8',
-      embed: 'https://www.youtube.com/embed/Y95eI-ek_E8'
-    },
-    {
-      title: 'ATS-Friendly Resume Writing Tips',
-      tag: 'Resume',
-      why: 'Useful for improving shortlist odds with a clean fresher resume.',
-      url: 'https://www.youtube.com/watch?v=Tt08KmFfIYQ',
-      embed: 'https://www.youtube.com/embed/Tt08KmFfIYQ'
-    }
+    { title: 'Aptitude Basics for Placements', type: 'Analytical', duration: '45 min', url: 'https://www.youtube.com/results?search_query=aptitude+basics+placements', reason: 'Quick way to reset percentages, averages, time-work, and speed-distance.' },
+    { title: 'C++ Interview Questions for Freshers', type: 'C++', duration: '60 min', url: 'https://www.youtube.com/results?search_query=c%2B%2B+interview+questions+for+freshers', reason: 'Good for OOP, STL, pointers, and common viva-style questions.' },
+    { title: 'Python Interview Preparation', type: 'Python', duration: '50 min', url: 'https://www.youtube.com/results?search_query=python+interview+questions+for+freshers', reason: 'Useful for core syntax, collections, OOP, and beginner scripting interview topics.' },
+    { title: 'Perl Tutorial and Regex Basics', type: 'Perl', duration: '40 min', url: 'https://www.youtube.com/results?search_query=perl+regex+tutorial', reason: 'Helpful for text processing and automation-oriented roles.' },
+    { title: 'Resume Tips for Software Freshers', type: 'Resume', duration: '25 min', url: 'https://www.youtube.com/results?search_query=software+fresher+resume+tips', reason: 'Shows what to add, remove, and how to make project bullets stronger.' },
+    { title: 'HR Interview Questions for Freshers', type: 'HR', duration: '35 min', url: 'https://www.youtube.com/results?search_query=hr+interview+questions+for+freshers', reason: 'Helps with confidence and cleaner behavioral answers.' }
   ],
-  resumeSections: [
-    {
-      title: 'One-Page Resume Rule',
-      body: ['Keep it to one page for fresher roles.', 'Order sections: Summary, Skills, Projects, Education, Experience/Internship, Achievements.', 'Use clean fonts and enough white space.']
-    },
-    {
-      title: 'Project Bullets That Win Interviews',
-      body: ['Start with action verbs: Built, Developed, Automated, Designed.', 'Show your specific role, not only team effort.', 'Mention outcomes: accuracy, speed, automation, user benefit.']
-    },
-    {
-      title: 'Skills Section Upgrade',
-      body: ['Separate languages, tools, frameworks, and databases.', 'Do not list skills you cannot defend in interview.', 'Prioritize C++, Python, SQL, Git, Linux basics, and relevant project stack.']
-    },
-    {
-      title: 'ATS and Recruiter Checklist',
-      body: ['Match keywords with job description.', 'Avoid graphics-heavy resume templates.', 'Use standard headings and save as PDF.']
-    }
+  resumeChecklist: [
+    { title: 'One-page format', desc: 'Keep fresher resume concise unless you have substantial internships/publications.' },
+    { title: 'Strong headline', desc: 'Add degree, target role, and 2–3 strengths instead of vague objective lines.' },
+    { title: 'Project bullets', desc: 'Use action verb + tech stack + measurable output or impact.' },
+    { title: 'Skills ordering', desc: 'Put strongest and interview-ready skills first: C++, Python, SQL, Git, OOP, DSA basics.' },
+    { title: 'ATS keywords', desc: 'Mirror job description keywords where truthful and relevant.' },
+    { title: 'No clutter', desc: 'Remove weak hobbies, outdated school achievements, and decorative charts.' }
   ],
-  hrPrep: [
-    {
-      q: 'Tell me about yourself',
-      a: 'Use a 60–90 second structure: current education status, technical strengths, key project, and why you fit the role.'
-    },
-    {
-      q: 'What are your strengths?',
-      a: 'Pick 2–3 strengths with proof. Example: structured problem-solving, quick learning, ownership of project tasks.'
-    },
-    {
-      q: 'What is your weakness?',
-      a: 'Choose a real but non-fatal weakness and show correction. Example: Earlier I rushed into coding; now I spend time clarifying requirements first.'
-    },
-    {
-      q: 'Why should we hire you?',
-      a: 'Connect your foundation, discipline, coding readiness, and willingness to learn quickly in team settings.'
-    },
-    {
-      q: 'How do you explain a project?',
-      a: 'Problem → approach → your role → tech stack → challenge handled → measurable outcome → learning.'
-    }
+  resumeBullets: [
+    { title: 'Project Bullet 1', desc: 'Built a Python-based attendance analysis tool using pandas, reducing manual report preparation time by 60%.' },
+    { title: 'Project Bullet 2', desc: 'Developed a C++ console application implementing file-based student record management with modular functions and input validation.' },
+    { title: 'Project Bullet 3', desc: 'Created a mini web dashboard to visualize placement preparation metrics and quiz progress for peers.' },
+    { title: 'Project Bullet 4', desc: 'Automated log parsing through regex-based scripting to extract error summaries from raw text files.' }
+  ],
+  hr: [
+    { title: 'Tell me about yourself', desc: 'Structure: present role/degree, relevant project/internship strengths, then why this role fits your next step.' },
+    { title: 'Strengths', desc: 'Pick 2–3 job-relevant strengths backed by examples: disciplined learner, debugging mindset, collaborative working style.' },
+    { title: 'Weaknesses', desc: 'Use a real but manageable weakness and show what you are doing to improve it.' },
+    { title: 'Why should we hire you?', desc: 'Connect your learning speed, project exposure, and willingness to execute under guidance.' },
+    { title: 'Project explanation', desc: 'Always explain problem, your role, stack used, logic, result, and one challenge faced.' },
+    { title: 'Questions to ask interviewer', desc: 'Ask about team onboarding, success metrics in first 90 days, and tools/workflow used.' }
   ],
   tasks: [
-    'Solve 10 analytical questions',
-    'Solve 10 logical reasoning questions',
-    'Revise 5 C++ interview questions',
-    'Revise 5 Python interview questions',
-    'Read 3 Perl regex examples',
-    'Update 1 resume bullet with impact',
-    'Practice self-introduction for 3 minutes',
-    'Watch 1 interview-prep video',
-    'Attempt 1 mock test',
-    'Review one project explanation using STAR format'
+    { id: 'task1', title: 'Solve 10 aptitude questions', desc: 'Practice with timer and review wrong answers.' },
+    { id: 'task2', title: 'Revise 10 flashcards', desc: 'Pick a technical category plus HR.' },
+    { id: 'task3', title: 'Code one easy problem', desc: 'Use C++ or Python and explain your solution aloud.' },
+    { id: 'task4', title: 'Improve one resume bullet', desc: 'Add metrics, stack, or clear action verb.' },
+    { id: 'task5', title: 'Practice self-introduction', desc: 'Record yourself for 60–90 seconds.' },
+    { id: 'task6', title: 'Watch one targeted video', desc: 'Choose weak area: aptitude, coding, resume, or HR.' }
   ],
-  companyTracks: [
+  interviewDay: [
+    { id: 'day1', title: 'Resume and links ready', desc: 'Resume PDF, GitHub, LinkedIn, and project links should be accessible.' },
+    { id: 'day2', title: 'Top 3 projects revised', desc: 'Be ready to explain problem, architecture, stack, and result.' },
+    { id: 'day3', title: 'Aptitude formulas revised', desc: 'Review percentages, averages, time-work, and ratios.' },
+    { id: 'day4', title: 'Environment check', desc: 'Laptop, browser, coding IDE, internet, charger, and quiet room.' },
+    { id: 'day5', title: 'Questions for interviewer prepared', desc: 'Keep 2–3 role-relevant questions ready.' }
+  ],
+  companyTests: [
     {
-      title: 'Service Companies',
-      fit: 'TCS, Infosys, Wipro, Cognizant style rounds',
-      priorities: ['Aptitude speed', 'Clear communication', 'Basic coding syntax', 'Consistency over complexity'],
-      strategy: 'Focus on accuracy, calm communication, and predictable execution. Freshers are judged on trainability and discipline.'
+      id: 'service', name: 'Service Company Round', intro: 'Focus on aptitude, reasoning, basic coding syntax, communication, and consistency. Think TCS/Infosys/Wipro style.',
+      questions: [
+        { q: 'Which matters most in service-company interviews for freshers?', options: ['Only advanced DSA', 'Balanced aptitude, basics, communication', 'Only open-source history', 'Only college marks'], answer: 'Balanced aptitude, basics, communication', explain: 'These companies value trainability and balanced readiness.' },
+        { q: 'In Python, which structure is ordered and mutable?', options: ['Tuple', 'List', 'Set', 'Frozen set'], answer: 'List', explain: 'List preserves order and is mutable.' },
+        { q: 'Find the next number: 3, 6, 11, 18, 27, ?', options: ['34', '36', '38', '40'], answer: '38', explain: 'Differences: 3,5,7,9 then 11.' },
+        { q: 'Strong resume bullet includes:', options: ['Random adjectives', 'Family details', 'Action + tech + impact', 'Long paragraph'], answer: 'Action + tech + impact', explain: 'That is the strongest structure.' },
+        { q: 'Best response to “Why this company?”', options: ['Any job is okay', 'Role learning path and delivery exposure', 'Higher cafeteria budget', 'My friend joined'], answer: 'Role learning path and delivery exposure', explain: 'Professional and company-relevant.' }
+      ]
     },
     {
-      title: 'Product Companies',
-      fit: 'Developer-focused fresher hiring',
-      priorities: ['Problem-solving', 'Data structure basics', 'Code quality', 'Project depth'],
-      strategy: 'Explain tradeoffs, think aloud, and show clarity in code structure and debugging.'
+      id: 'product', name: 'Product Company Mini Round', intro: 'More weight on problem solving, code quality, data structures, debugging, and project depth.',
+      questions: [
+        { q: 'Which is the best reason to discuss time complexity?', options: ['To sound smart', 'To compare solution efficiency', 'To avoid coding', 'Not needed in interviews'], answer: 'To compare solution efficiency', explain: 'Efficiency comparison is the point.' },
+        { q: 'Which C++ container is best for LIFO behavior?', options: ['queue', 'stack', 'map', 'set'], answer: 'stack', explain: 'Stack follows last-in-first-out.' },
+        { q: 'What is a hash map useful for?', options: ['Sorting only', 'Fast lookup by key', 'Only recursion', 'Only graphs'], answer: 'Fast lookup by key', explain: 'Hash maps are commonly used for quick lookup.' },
+        { q: 'A good project explanation starts with:', options: ['Random code details', 'Problem statement and user need', 'Team lunch story', 'Tool version numbers'], answer: 'Problem statement and user need', explain: 'Context first, then implementation.' },
+        { q: 'What shows fresher potential in product interviews?', options: ['Rote memorization', 'Structured thinking and debugging ability', 'Very long self-introduction', 'Decorative resume'], answer: 'Structured thinking and debugging ability', explain: 'Potential is judged through thought process.' }
+      ]
     },
     {
-      title: 'Startups',
-      fit: 'Lean teams looking for adaptable builders',
-      priorities: ['Ownership', 'Fast learning', 'Hands-on projects', 'Practical debugging'],
-      strategy: 'Highlight real project work, initiative, and willingness to work across multiple tasks.'
+      id: 'startup', name: 'Startup Interview Sprint', intro: 'Expect hands-on execution, ownership mindset, quick learning, and practical project discussions.',
+      questions: [
+        { q: 'Best quality for startup fresher roles?', options: ['Slow adaptation', 'Ownership and quick learning', 'Avoid ambiguity', 'Only theory'], answer: 'Ownership and quick learning', explain: 'Startups value speed and initiative.' },
+        { q: 'Why is Python popular in startups?', options: ['Verbose syntax', 'Fast development cycle', 'No libraries exist', 'Only hardware use'], answer: 'Fast development cycle', explain: 'Python is valued for rapid development.' },
+        { q: 'Which answer sounds strongest?', options: ['I know everything', 'I learn fast and ship practical solutions', 'I prefer zero feedback', 'I dislike collaboration'], answer: 'I learn fast and ship practical solutions', explain: 'This signals execution and growth mindset.' },
+        { q: 'Best project proof for startup roles?', options: ['Title only', 'Live demo, GitHub, metrics', 'Only screenshots', 'No explanation'], answer: 'Live demo, GitHub, metrics', explain: 'Concrete proof matters.' },
+        { q: 'How should you handle an unknown interview question?', options: ['Panic', 'Guess wildly', 'Clarify, reason aloud, attempt systematically', 'Stay silent'], answer: 'Clarify, reason aloud, attempt systematically', explain: 'Structured reasoning is valued.' }
+      ]
     }
   ]
 };

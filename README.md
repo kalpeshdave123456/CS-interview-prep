@@ -1,36 +1,22 @@
-# CS Interview Prep
+# CS Interview Prep Pro
 
-Standalone fresher interview preparation web app built for GitHub Pages.
+A GitHub Pages ready static interview preparation app for CS freshers.
 
 ## Features
-
-- Dashboard with progress tracking
-- 4-week roadmap
-- Analytical aptitude revision + quizzes
-- Logical reasoning revision + quizzes
-- C++, Python, and Perl interview tracks
-- Flashcards with local progress saving
-- Mock tests with instant scoring
-- Video shelf with curated YouTube links
-- Resume updation strategy
-- HR and soft-skills preparation
-- Daily task tracker
-- Company-oriented mini-tests
+- Dashboard with progress tracking using localStorage
+- 6-week roadmap
+- Analytical and logical prep modules
+- C++, Python, and Perl technical section
+- Flashcards with smart revision tracking
+- Mock tests with instant scoring and explanations
+- Curated video shelf
+- Resume strategy and stronger bullet examples
+- HR and behavioral prep
+- Daily task tracker and interview-day checklist
+- Company-style mini tests
 
 ## Run locally
+Open `index.html` directly in a browser, or host via any static server.
 
-Just open `index.html` in your browser.
-
-## Host on GitHub Pages
-
-1. Create a new GitHub repository.
-2. Upload all files from this folder.
-3. In repository settings, open **Pages**.
-4. Set source to the main branch root.
-5. Save and open the generated GitHub Pages link.
-
-## Notes
-
-- Progress uses browser localStorage.
-- No backend is required.
-- Works as a static website.
+## GitHub Pages
+Upload all files from this folder to a repository root and enable Pages.
