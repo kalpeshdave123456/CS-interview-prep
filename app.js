@@ -1,377 +1,205 @@
-const state = {
-  progress: JSON.parse(localStorage.getItem('csInterviewPrepProgress') || '{}'),
-  currentSection: 'dashboard',
-  tech: 'cpp',
-  flashcat: 'All',
-  flashIndex: 0,
-  currentMock: APP_DATA.mockTests[0].id,
-  currentCompany: APP_DATA.companyTests[0].id,
-  analyticalFilters: { topic: 'All', level: 'All', company: 'All' },
-  logicalFilters: { topic: 'All', level: 'All', company: 'All' },
-  analyticalSet: [],
-  logicalSet: [],
-  mockTimer: null,
-  companyTimer: null,
-  mockRemaining: APP_DATA.mockTests[0].durationMinutes * 60,
-  companyRemaining: 20 * 60,
-};
+const STORAGE_KEY = 'csInterviewPrepProState';
+const FEEDBACK_KEY = 'csInterviewPrepFeedback';
+const state = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+state.progress = state.progress || { revised:0, tests:[], checks:{} };
+state.currentPage = state.currentPage || 'dashboard';
+state.flashIndex = state.flashIndex || 0;
+state.flashCat = state.flashCat || 'All';
+state.currentTech = state.currentTech || 'cpp';
+state.currentMock = state.currentMock || APP_DATA.mockTests[0].id;
+state.currentCompany = state.currentCompany || APP_DATA.companyTests[0].id;
+state.analytical = state.analytical || { topic:'All', level:'All', company:'All', loaded:[] };
+state.logical = state.logical || { topic:'All', level:'All', company:'All', loaded:[] };
+state.timers = {};
 
-function saveProgress() { localStorage.setItem('csInterviewPrepProgress', JSON.stringify(state.progress)); }
-function $(sel, root = document) { return root.querySelector(sel); }
-function $all(sel, root = document) { return Array.from(root.querySelectorAll(sel)); }
-function escapeHtml(str) { return String(str).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+const save = () => localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function pageTitle(label){ $('#pageTitle').textContent = label; }
+function fmt(sec){ const m = Math.floor(sec/60).toString().padStart(2,'0'); const s = (sec%60).toString().padStart(2,'0'); return `${m}:${s}`; }
 
-function updateStats() {
-  const revised = state.progress.revisedCards || 0;
-  const tests = (state.progress.testsAttempted || []).length;
-  const tasks = Object.values(state.progress.tasks || {}).filter(Boolean).length + Object.values(state.progress.interviewDay || {}).filter(Boolean).length + Object.values(state.progress.resume || {}).filter(Boolean).length;
-  const denominator = APP_DATA.flashcards.length + APP_DATA.tasks.length + APP_DATA.interviewDay.length + APP_DATA.resumeChecklist.length + 40;
-  const achieved = revised + tasks + tests * 2;
-  const pct = Math.min(100, Math.round((achieved / denominator) * 100));
-  $('#cardsRevisedCount').textContent = revised;
-  $('#testsAttemptedCount').textContent = tests;
-  $('#tasksCompletedCount').textContent = tasks;
-  $('#overallProgress').textContent = `${pct}%`;
+function renderNav(){
+  $('#nav').innerHTML = APP_DATA.nav.map(n => `<button class="nav-btn ${state.currentPage===n.id?'active':''}" data-page="${n.id}">${n.label}</button>`).join('');
+  $$('.nav-btn').forEach(btn => btn.onclick = () => switchPage(btn.dataset.page));
+}
+function switchPage(id){
+  state.currentPage = id; save();
+  $$('.page').forEach(p => p.classList.toggle('active', p.id===id));
+  const label = APP_DATA.nav.find(n => n.id===id)?.label || 'Dashboard';
+  pageTitle(label); renderNav(); $('#sidebar').classList.remove('open');
+}
+function stats(){
+  const completed = Object.values(state.progress.checks).filter(Boolean).length;
+  return { revised: state.progress.revised, tests: state.progress.tests.length, checks: completed };
 }
 
-function switchSection(sectionId) {
-  state.currentSection = sectionId;
-  $all('.content-section').forEach(s => s.classList.toggle('active', s.id === sectionId));
-  $all('.nav-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.section === sectionId));
-  $('#sectionTitle').textContent = $(`.nav-btn[data-section="${sectionId}"]`).textContent;
-  if (window.innerWidth <= 980) $('#sidebar').classList.remove('open');
-}
-
-function renderDashboard() {
-  $('#todayFocus').innerHTML = APP_DATA.todayFocus.map(item => `<div class="item-card"><h5>${escapeHtml(item)}</h5></div>`).join('');
-  $('#moduleGrid').innerHTML = APP_DATA.modules.map(m => `<div class="module-card"><h5>${escapeHtml(m.title)}</h5><p>${escapeHtml(m.desc)}</p></div>`).join('');
-}
-
-function renderRoadmap() {
-  $('#roadmapGrid').innerHTML = APP_DATA.roadmap.map(w => `
-    <div class="roadmap-card">
-      <div class="week-tag">${escapeHtml(w.week)}</div>
-      <h4>${escapeHtml(w.title)}</h4>
-      <p>${w.points.map(escapeHtml).join(' • ')}</p>
-    </div>`).join('');
-}
-
-function renderAnalyticalOverview() {
-  $('#analyticalConcepts').innerHTML = APP_DATA.analyticalConcepts.map((c, i) => `
-    <div class="accordion-item ${i === 0 ? 'open' : ''}">
-      <button class="accordion-btn">${escapeHtml(c.title)}<span>+</span></button>
-      <div class="accordion-content">${escapeHtml(c.content)}</div>
-    </div>`).join('');
-  $('#formulaBoard').innerHTML = APP_DATA.formulas.map(f => `<div class="formula-item"><strong>${escapeHtml(f.topic)}</strong><code>${escapeHtml(f.formula)}</code></div>`).join('');
-  $all('.accordion-btn').forEach(btn => btn.addEventListener('click', () => btn.parentElement.classList.toggle('open')));
-  $('#analyticalCount').textContent = `${APP_DATA.analyticalQuestions.length} questions in bank • filtered set shows 15 at a time.`;
-}
-
-function renderLogicalOverview() {
-  $('#logicalPacks').innerHTML = APP_DATA.logicalPacks.map(l => `<div class="logic-card"><h5>${escapeHtml(l.title)}</h5><p>${escapeHtml(l.desc)}</p></div>`).join('');
-  $('#logicalCount').textContent = `${APP_DATA.logicalQuestions.length} questions in bank • filtered set shows 15 at a time.`;
-}
-
-function renderTech() {
-  const data = APP_DATA.tech[state.tech];
-  $('#techTitle').textContent = data.title;
-  $('#techContent').innerHTML = `<div class="tech-list">${data.sections.map(sec => `
-    <div class="tech-section"><h5>${escapeHtml(sec.heading)}</h5><ul>${sec.items.map(i => `<li>${escapeHtml(i)}</li>`).join('')}</ul></div>`).join('')}</div>`;
-  $all('.tech-tab').forEach(btn => btn.classList.toggle('active', btn.dataset.tech === state.tech));
-}
-
-function flashcardPool() {
-  return state.flashcat === 'All' ? APP_DATA.flashcards : APP_DATA.flashcards.filter(c => c.cat === state.flashcat);
-}
-
-function renderFlashcardCategories() {
-  const cats = ['All', ...new Set(APP_DATA.flashcards.map(f => f.cat))];
-  $('#flashcardCategory').innerHTML = cats.map(c => `<option ${state.flashcat === c ? 'selected' : ''}>${escapeHtml(c)}</option>`).join('');
-}
-
-function renderFlashcard() {
-  const pool = flashcardPool();
-  if (!pool.length) return;
-  const idx = ((state.flashIndex % pool.length) + pool.length) % pool.length;
-  state.flashIndex = idx;
-  const card = pool[idx];
-  $('#flashcardBadge').textContent = card.cat;
-  $('#flashcardQuestion').textContent = card.q;
-  $('#flashcardAnswer').textContent = card.a;
-  $('#flashcard').classList.remove('flipped');
-}
-
-function populateQuestionFilters(prefix, questions) {
-  const topics = ['All', ...new Set(questions.map(q => q.topic))];
-  const levels = ['All', ...new Set(questions.map(q => q.level))];
-  const companies = ['All', ...new Set(questions.map(q => q.company))];
-  $(`#${prefix}TopicFilter`).innerHTML = topics.map(v => `<option>${escapeHtml(v)}</option>`).join('');
-  $(`#${prefix}LevelFilter`).innerHTML = levels.map(v => `<option>${escapeHtml(v)}</option>`).join('');
-  $(`#${prefix}CompanyFilter`).innerHTML = companies.map(v => `<option>${escapeHtml(v)}</option>`).join('');
-}
-
-function getFilteredQuestions(kind) {
-  const filters = state[`${kind}Filters`];
-  const source = APP_DATA[`${kind}Questions`];
-  return source.filter(q =>
-    (filters.topic === 'All' || q.topic === filters.topic) &&
-    (filters.level === 'All' || q.level === filters.level) &&
-    (filters.company === 'All' || q.company === filters.company)
-  );
-}
-
-function pickDeterministicSet(arr, size) {
-  if (!arr.length) return [];
-  const set = [];
-  let idx = (arr.length * 7 + size) % arr.length;
-  while (set.length < Math.min(size, arr.length)) {
-    const q = arr[idx % arr.length];
-    if (!set.includes(q)) set.push(q);
-    idx += 3;
-  }
-  return set;
-}
-
-function renderPractice(kind) {
-  const filtered = getFilteredQuestions(kind);
-  const form = $(`#${kind}Form`);
-  const result = $(`#${kind}Result`);
-  state[`${kind}Set`] = pickDeterministicSet(filtered, 15);
-  const set = state[`${kind}Set`];
-  form.innerHTML = set.length ? set.map((q, i) => renderQuestionCard(q, `${kind}_q`, i)).join('') : `<div class="item-card"><p>No questions match the selected filters. Change filters and load again.</p></div>`;
-  result.innerHTML = '';
-}
-
-function renderQuestionCard(q, prefix, i) {
-  return `
-    <div class="question-card">
-      <div class="question-tags">
-        <span class="mini-pill">${escapeHtml(q.topic)}</span>
-        <span class="mini-pill">${escapeHtml(q.level)}</span>
-        <span class="mini-pill">${escapeHtml(q.company)}</span>
+function renderDashboard(){
+  const s = stats();
+  $('#dashboard').innerHTML = `
+    <div class="hero">
+      <div class="card">
+        <div class="eyebrow">Interview system</div>
+        <h3>Professional CS fresher preparation tool</h3>
+        <p class="muted">Includes analytical and logical banks with 200 questions each, 25 timed mock tests, company mini-tests, videos, flashcards, resume guidance, and interview-day execution tasks.</p>
+        <div class="select-row">
+          <button class="btn" data-jump="analytical">Start Analytical</button>
+          <button class="btn btn-secondary" data-jump="mocktests">Take Timed Mock</button>
+          <button class="btn btn-secondary" data-jump="company">Company Test</button>
+        </div>
       </div>
-      <h5>Q${i + 1}. ${escapeHtml(q.q)}</h5>
-      ${q.options.map(opt => `<label class="option-label"><input type="radio" name="${prefix}_${i}" value="${escapeHtml(opt)}"> ${escapeHtml(opt)}</label>`).join('')}
+      <div class="grid">
+        <div class="card"><div class="eyebrow">Flashcards revised</div><div class="stat">${s.revised}</div></div>
+        <div class="card"><div class="eyebrow">Tests attempted</div><div class="stat">${s.tests}</div></div>
+        <div class="card"><div class="eyebrow">Checklist items done</div><div class="stat">${s.checks}</div></div>
+      </div>
+    </div>
+    <div class="grid grid-3">
+      <div class="card"><h4>Analytical Bank</h4><p class="muted">200 MCQs with explanations, filters, answer checking, and 20-question set loader.</p></div>
+      <div class="card"><h4>Logical Bank</h4><p class="muted">200 MCQs across series, direction, syllogism, puzzles, data sufficiency, and more.</p></div>
+      <div class="card"><h4>Mock Engine</h4><p class="muted">25 tests × 25 questions × 30 minutes, with instant score and review.</p></div>
     </div>`;
+  $$('[data-jump]').forEach(b=>b.onclick=()=>switchPage(b.dataset.jump));
 }
 
-function evaluateQuiz(questions, prefix, resultNode, testKey, storeAttempt = true) {
+function renderRoadmap(){
+  $('#roadmap').innerHTML = `<div class="grid grid-2">${APP_DATA.roadmap.map(r=>`<div class="roadmap-item"><div class="eyebrow">${esc(r.week)}</div><h3>${esc(r.title)}</h3><ul>${r.points.map(p=>`<li>${esc(p)}</li>`).join('')}</ul></div>`).join('')}</div>`;
+}
+
+function uniqVals(list, key){ return ['All', ...new Set(list.map(x=>x[key]))]; }
+function options(vals, current){ return vals.map(v=>`<option value="${esc(v)}" ${v===current?'selected':''}>${esc(v)}</option>`).join(''); }
+function filtered(kind){
+  const source = kind==='analytical' ? APP_DATA.analyticalQuestions : APP_DATA.logicalQuestions;
+  const f = state[kind];
+  return source.filter(q => (f.topic==='All'||q.topic===f.topic) && (f.level==='All'||q.level===f.level) && (f.company==='All'||q.company===f.company));
+}
+function deterministicSample(arr, size){
+  const n = Math.min(size, arr.length); const out=[]; let step = arr.length>1 ? 7 : 1; let idx = arr.length ? (arr.length+size)%arr.length : 0;
+  while(out.length<n){ const item = arr[idx % arr.length]; if(!out.includes(item)) out.push(item); idx += step; }
+  return out;
+}
+function questionCard(q, group, i){
+  return `<div class="q-card"><div class="tags"><span class="tag">${esc(q.topic)}</span><span class="tag">${esc(q.level)}</span><span class="tag">${esc(q.company)}</span></div><h4>Q${i+1}. ${esc(q.q)}</h4>${q.options.map(opt=>`<label class="option"><input type="radio" name="${group}_${i}" value="${esc(opt)}">${esc(opt)}</label>`).join('')}</div>`;
+}
+function evaluate(set, group, resultNode, testId){
   let score = 0;
-  const review = questions.map((q, i) => {
-    const selected = document.querySelector(`input[name="${prefix}_${i}"]:checked`)?.value || '';
-    const correct = selected === q.answer;
-    if (correct) score++;
-    return { ...q, selected, correct };
-  });
-  const pct = Math.round((score / Math.max(1, questions.length)) * 100);
-  let cls = 'result-bad';
-  let label = 'Needs work';
-  if (pct >= 80) { cls = 'result-good'; label = 'Excellent'; }
-  else if (pct >= 60) { cls = 'result-warn'; label = 'Good, but sharpen more'; }
-  resultNode.innerHTML = `
-    <h4 class="${cls}">${label}: ${score}/${questions.length} (${pct}%)</h4>
-    <div class="stack-list">
-      ${review.map((r, i) => `<div class="item-card"><h5>Q${i + 1}. ${r.correct ? '✅' : '❌'} ${escapeHtml(r.q)}</h5><p><strong>Your answer:</strong> ${escapeHtml(r.selected || 'Not attempted')}<br><strong>Correct answer:</strong> ${escapeHtml(r.answer)}<br><strong>Explanation:</strong> ${escapeHtml(r.explain)}</p></div>`).join('')}
-    </div>`;
-  if (storeAttempt) {
-    state.progress.testsAttempted = state.progress.testsAttempted || [];
-    state.progress.testsAttempted.push({ key: testKey, score, total: questions.length, date: new Date().toISOString() });
-    saveProgress();
-    updateStats();
-  }
+  const html = set.map((q,i)=>{
+    const selected = document.querySelector(`input[name="${group}_${i}"]:checked`)?.value || 'Not answered';
+    const ok = selected === q.answer; if(ok) score++;
+    return `<div class="review-item"><strong>${esc(q.q)}</strong><div class="${ok?'correct':'wrong'}">Your answer: ${esc(selected)}</div><div class="correct">Correct answer: ${esc(q.answer)}</div><div class="muted">Explanation: ${esc(q.explanation)}</div></div>`;
+  }).join('');
+  resultNode.innerHTML = `<div class="result-box"><h3>Score: ${score} / ${set.length}</h3>${html}</div>`;
+  state.progress.tests.push({ id:testId, at:new Date().toISOString(), score, total:set.length });
+  save(); renderDashboard();
+}
+function renderPractice(kind){
+  const source = kind==='analytical'?APP_DATA.analyticalQuestions:APP_DATA.logicalQuestions;
+  const current = state[kind];
+  const wrapper = $('#'+kind);
+  wrapper.innerHTML = `
+    <div class="card"><div class="eyebrow">Practice bank</div><h3>${kind==='analytical'?'Analytical MCQ Practice':'Logical MCQ Practice'}</h3><p class="muted">${source.length} total questions. Use filters, then click Load Set. Each load brings 20 MCQs with detailed explanation after submission.</p>
+      <div class="select-row">
+        <select id="${kind}Topic">${options(uniqVals(source,'topic'), current.topic)}</select>
+        <select id="${kind}Level">${options(uniqVals(source,'level'), current.level)}</select>
+        <select id="${kind}Company">${options(uniqVals(source,'company'), current.company)}</select>
+        <button class="btn" id="${kind}Load">Load Set</button>
+        <button class="btn btn-secondary" id="${kind}Submit">Submit Answers</button>
+      </div>
+      <div id="${kind}Count" class="muted"></div>
+    </div>
+    <div id="${kind}Questions" class="grid"></div>
+    <div id="${kind}Result"></div>`;
+
+  const topicSel = $('#'+kind+'Topic'); const levelSel = $('#'+kind+'Level'); const companySel = $('#'+kind+'Company');
+  topicSel.onchange = e => { state[kind].topic = e.target.value; save(); updateCount(kind); };
+  levelSel.onchange = e => { state[kind].level = e.target.value; save(); updateCount(kind); };
+  companySel.onchange = e => { state[kind].company = e.target.value; save(); updateCount(kind); };
+  $('#'+kind+'Load').onclick = () => loadPractice(kind);
+  $('#'+kind+'Submit').onclick = () => evaluate(state[kind].loaded, kind+'q', $('#'+kind+'Result'), kind+'_practice');
+  updateCount(kind); loadPractice(kind);
+}
+function updateCount(kind){
+  const count = filtered(kind).length; $('#'+kind+'Count').textContent = `Matching questions: ${count}`;
+}
+function loadPractice(kind){
+  const arr = filtered(kind); const set = deterministicSample(arr, 20); state[kind].loaded = set; save();
+  $('#'+kind+'Questions').innerHTML = set.length ? set.map((q,i)=>questionCard(q, kind+'q', i)).join('') : `<div class="card">No questions match these filters.</div>`;
+  $('#'+kind+'Result').innerHTML = '';
 }
 
-function renderMockSelector() {
-  $('#mockSelector').innerHTML = APP_DATA.mockTests.map(t => `<option value="${t.id}" ${state.currentMock === t.id ? 'selected' : ''}>${escapeHtml(t.title)}</option>`).join('');
+function renderTechnical(){
+  const tabs = Object.entries(APP_DATA.tech).map(([k,v])=>`<button class="btn ${state.currentTech===k?'':'btn-secondary'}" data-tech="${k}">${v.title.replace(' Interview Prep','')}</button>`).join('');
+  const t = APP_DATA.tech[state.currentTech];
+  $('#technical').innerHTML = `<div class="card"><div class="eyebrow">Technical preparation</div><h3>${esc(t.title)}</h3><div class="select-row">${tabs}</div></div><div class="grid grid-3">${t.cards.map(card=>`<div class="tech-card"><h4>${esc(card[0])}</h4><ul>${card[1].map(i=>`<li>${esc(i)}</li>`).join('')}</ul></div>`).join('')}</div>`;
+  $$('[data-tech]').forEach(b=>b.onclick=()=>{ state.currentTech=b.dataset.tech; save(); renderTechnical(); });
 }
 
-function formatTime(sec) {
-  const m = String(Math.floor(sec / 60)).padStart(2, '0');
-  const s = String(sec % 60).padStart(2, '0');
-  return `${m}:${s}`;
+function renderFlashcards(){
+  const cats = ['All', ...new Set(APP_DATA.flashcards.map(f=>f.cat))];
+  const pool = state.flashCat==='All' ? APP_DATA.flashcards : APP_DATA.flashcards.filter(f=>f.cat===state.flashCat);
+  const idx = pool.length ? ((state.flashIndex % pool.length)+pool.length)%pool.length : 0; state.flashIndex = idx; save();
+  const card = pool[idx];
+  $('#flashcards').innerHTML = `<div class="card"><div class="eyebrow">Revision engine</div><h3>Flashcards</h3><div class="select-row"><select id="flashCat">${options(cats, state.flashCat)}</select><button class="btn btn-secondary" id="prevFlash">Prev</button><button class="btn btn-secondary" id="nextFlash">Next</button><button class="btn" id="markRev">Mark Revised</button></div></div>
+    <div class="flashcard" id="flashcard">${card?`<div class="flashcard-inner"><div class="flashface"><div class="eyebrow">${esc(card.cat)}</div><h3>${esc(card.q)}</h3><p class="muted">Tap card to flip</p></div><div class="flashface flashback"><div class="eyebrow">Answer</div><p>${esc(card.a)}</p></div></div>`:'<div class="card">No cards</div>'}</div>`;
+  $('#flashCat').onchange = e => { state.flashCat=e.target.value; state.flashIndex=0; save(); renderFlashcards(); };
+  $('#prevFlash').onclick = () => { state.flashIndex--; save(); renderFlashcards(); };
+  $('#nextFlash').onclick = () => { state.flashIndex++; save(); renderFlashcards(); };
+  $('#markRev').onclick = () => { state.progress.revised++; save(); renderDashboard(); };
+  $('#flashcard').onclick = ()=> $('#flashcard').classList.toggle('flipped');
 }
 
-function startTimer(type, totalSeconds, displayId, onExpire) {
-  clearInterval(state[`${type}Timer`]);
-  state[`${type}Remaining`] = totalSeconds;
-  const node = $(displayId);
-  node.textContent = formatTime(totalSeconds);
-  state[`${type}Timer`] = setInterval(() => {
-    state[`${type}Remaining`] -= 1;
-    node.textContent = formatTime(Math.max(0, state[`${type}Remaining`]));
-    if (state[`${type}Remaining`] <= 0) {
-      clearInterval(state[`${type}Timer`]);
-      onExpire();
-    }
-  }, 1000);
+function startTimer(key, secs, node, onEnd){
+  clearInterval(state.timers[key]); let remaining = secs; node.textContent = fmt(remaining);
+  state.timers[key] = setInterval(()=>{ remaining--; node.textContent = fmt(remaining); if(remaining<=0){ clearInterval(state.timers[key]); onEnd(); } },1000);
+}
+function renderMocktests(){
+  const current = APP_DATA.mockTests.find(m=>m.id===state.currentMock) || APP_DATA.mockTests[0];
+  $('#mocktests').innerHTML = `<div class="card"><div class="eyebrow">Timed tests</div><h3>Mock Tests</h3><div class="select-row"><select id="mockSelector">${APP_DATA.mockTests.map(m=>`<option value="${m.id}" ${m.id===current.id?'selected':''}>${m.title}</option>`).join('')}</select><span class="timer" id="mockTimer">30:00</span><button class="btn btn-secondary" id="mockStart">Start / Restart</button><button class="btn" id="mockSubmit">Submit Mock</button></div><p class="muted">25 mock tests. Each mock has 25 questions and a 30-minute timer.</p></div><div id="mockQuestions" class="grid"></div><div id="mockResult"></div>`;
+  $('#mockQuestions').innerHTML = current.questions.map((q,i)=>questionCard(q,'mockq',i)).join('');
+  $('#mockSelector').onchange = e => { state.currentMock=e.target.value; save(); renderMocktests(); };
+  $('#mockStart').onclick = () => startTimer('mock', current.durationMinutes*60, $('#mockTimer'), ()=> evaluate(current.questions,'mockq',$('#mockResult'),current.id));
+  $('#mockSubmit').onclick = () => { clearInterval(state.timers.mock); evaluate(current.questions,'mockq',$('#mockResult'),current.id); };
 }
 
-function renderMock() {
-  const mock = APP_DATA.mockTests.find(t => t.id === state.currentMock);
-  $('#mockMeta').textContent = `${mock.desc} • 30-minute time limit • ${mock.questions.length} questions`;
-  $('#mockForm').innerHTML = mock.questions.map((q, i) => renderQuestionCard(q, 'mock_q', i)).join('');
-  $('#mockResult').innerHTML = '';
-  startTimer('mock', mock.durationMinutes * 60, '#mockTimer', () => evaluateQuiz(mock.questions, 'mock_q', $('#mockResult'), mock.id));
+function renderVideos(){
+  $('#videos').innerHTML = `<div class="grid grid-2">${APP_DATA.videos.map(v=>`<div class="card"><div class="eyebrow">${esc(v.category)}</div><h3>Top picks</h3>${v.items.map(item=>`<div class="video-item"><strong>${esc(item.title)}</strong><p class="muted">${esc(item.why)}</p><a href="${item.url}" target="_blank" rel="noopener noreferrer">Open direct link</a></div>`).join('')}</div>`).join('')}</div>`;
 }
 
-function renderVideos() {
-  $('#videoGrid').innerHTML = APP_DATA.videoCategories.map(cat => `
-    <div class="video-category glass-lite">
-      <h5>${escapeHtml(cat.category)}</h5>
-      <div class="video-list">${cat.items.map(v => `
-        <div class="video-card">
-          <div>
-            <h6>${escapeHtml(v.title)}</h6>
-            <div class="video-meta">${escapeHtml(v.duration)}</div>
-            <p>${escapeHtml(v.reason)}</p>
-          </div>
-          <a href="${escapeHtml(v.url)}" target="_blank" rel="noopener noreferrer">Open Video</a>
-        </div>`).join('')}</div>
-    </div>`).join('');
+function renderResume(){
+  $('#resume').innerHTML = `<div class="grid grid-2">${APP_DATA.resumeCards.map(c=>`<div class="card"><h3>${esc(c.title)}</h3><p class="muted">${esc(c.desc)}</p></div>`).join('')}</div>`;
+}
+function renderHR(){
+  $('#hr').innerHTML = `<div class="grid grid-2">${APP_DATA.hrCards.map(c=>`<div class="card"><h3>${esc(c.title)}</h3><p class="muted">${esc(c.desc)}</p></div>`).join('')}</div>`;
+}
+function renderTasks(){
+  const item = (x)=>`<label class="check-item"><input type="checkbox" data-check="${x.id}" ${state.progress.checks[x.id]?'checked':''}> <div><strong>${esc(x.title)}</strong><div class="muted">${esc(x.desc)}</div></div></label>`;
+  $('#tasks').innerHTML = `<div class="grid grid-2"><div class="card"><div class="eyebrow">Daily tasks</div><h3>Execution checklist</h3>${APP_DATA.tasks.map(item).join('')}</div><div class="card"><div class="eyebrow">Interview day</div><h3>Final readiness</h3>${APP_DATA.interviewDay.map(item).join('')}</div></div>`;
+  $$('[data-check]').forEach(c=>c.onchange=e=>{ state.progress.checks[e.target.dataset.check]=e.target.checked; save(); renderDashboard(); });
 }
 
-function renderResume() {
-  $('#resumeChecklist').innerHTML = APP_DATA.resumeChecklist.map((item, idx) => `
-    <label class="check-item"><input type="checkbox" data-group="resume" data-id="resume_${idx}" ${state.progress.resume?.[`resume_${idx}`] ? 'checked' : ''}><div class="check-text"><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.desc)}</span></div></label>`).join('');
-  $('#resumeBullets').innerHTML = APP_DATA.resumeBullets.map(b => `<div class="resume-bullet"><h5>${escapeHtml(b.title)}</h5><p>${escapeHtml(b.desc)}</p></div>`).join('');
+function renderCompany(){
+  const current = APP_DATA.companyTests.find(c=>c.id===state.currentCompany) || APP_DATA.companyTests[0];
+  $('#company').innerHTML = `<div class="card"><div class="eyebrow">Targeted rounds</div><h3>Company Mini-Tests</h3><div class="select-row"><select id="companySelector">${APP_DATA.companyTests.map(c=>`<option value="${c.id}" ${c.id===current.id?'selected':''}>${c.name}</option>`).join('')}</select><span class="timer" id="companyTimer">20:00</span><button class="btn btn-secondary" id="companyStart">Start / Restart</button><button class="btn" id="companySubmit">Submit Test</button></div><p class="muted">Dropdown includes GOOG, MSFT, AMD, NVIDIA, TCS, and Infosys. Each mini-test contains 10 relevant screening questions.</p></div><div id="companyQuestions" class="grid"></div><div id="companyResult"></div>`;
+  $('#companyQuestions').innerHTML = current.questions.map((q,i)=>questionCard(q,'companyq',i)).join('');
+  $('#companySelector').onchange = e => { state.currentCompany=e.target.value; save(); renderCompany(); };
+  $('#companyStart').onclick = () => startTimer('company', current.durationMinutes*60, $('#companyTimer'), ()=> evaluate(current.questions,'companyq',$('#companyResult'),current.id));
+  $('#companySubmit').onclick = () => { clearInterval(state.timers.company); evaluate(current.questions,'companyq',$('#companyResult'),current.id); };
 }
 
-function renderHR() {
-  $('#hrGrid').innerHTML = APP_DATA.hr.map(item => `<div class="hr-card"><h5>${escapeHtml(item.title)}</h5><p>${escapeHtml(item.desc)}</p></div>`).join('');
-}
-
-function renderTasks() {
-  $('#taskList').innerHTML = APP_DATA.tasks.map(item => checkMarkup(item, 'tasks')).join('');
-  $('#interviewDayChecklist').innerHTML = APP_DATA.interviewDay.map(item => checkMarkup(item, 'interviewDay')).join('');
-}
-
-function checkMarkup(item, group) {
-  const checked = state.progress[group]?.[item.id] ? 'checked' : '';
-  return `<label class="check-item"><input type="checkbox" data-group="${group}" data-id="${escapeHtml(item.id)}" ${checked}><div class="check-text"><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.desc)}</span></div></label>`;
-}
-
-function renderCompanySelector() {
-  $('#companySelector').innerHTML = APP_DATA.companyTests.map(t => `<option value="${t.id}" ${state.currentCompany === t.id ? 'selected' : ''}>${escapeHtml(t.name)}</option>`).join('');
-}
-
-function renderCompanyTest() {
-  const company = APP_DATA.companyTests.find(t => t.id === state.currentCompany);
-  $('#companyIntro').textContent = `${company.intro} • 10 questions • suggested time: 20 minutes.`;
-  $('#companyForm').innerHTML = company.questions.map((q, i) => renderQuestionCard(q, 'company_q', i)).join('');
-  $('#companyResult').innerHTML = '';
-  startTimer('company', 20 * 60, '#companyTimer', () => evaluateQuiz(company.questions, 'company_q', $('#companyResult'), company.id));
-}
-
-function bindCheckboxPersistence() {
-  document.addEventListener('change', (e) => {
-    if (!e.target.matches('input[type="checkbox"][data-group]')) return;
-    const group = e.target.dataset.group;
-    const id = e.target.dataset.id;
-    state.progress[group] = state.progress[group] || {};
-    state.progress[group][id] = e.target.checked;
-    saveProgress();
-    updateStats();
-  });
-}
-
-function resetProgress() {
-  if (!confirm('Reset all saved progress, checkboxes, feedback, and test history?')) return;
-  localStorage.removeItem('csInterviewPrepProgress');
-  localStorage.removeItem('csInterviewPrepFeedback');
-  location.reload();
-}
-
-function applySearch() {
-  const term = $('#globalSearch').value.trim().toLowerCase();
-  $all('mark.search-hit').forEach(mark => {
-    const parent = mark.parentNode;
-    parent.replaceChild(document.createTextNode(mark.textContent), mark);
-    parent.normalize();
-  });
-  if (!term) return;
-  $all('.content-section.active p, .content-section.active h5, .content-section.active li, .content-section.active strong').forEach(node => {
-    const text = node.textContent;
-    const idx = text.toLowerCase().indexOf(term);
-    if (idx >= 0 && node.childNodes.length === 1) {
-      const before = text.slice(0, idx);
-      const match = text.slice(idx, idx + term.length);
-      const after = text.slice(idx + term.length);
-      node.innerHTML = `${escapeHtml(before)}<mark class="search-hit">${escapeHtml(match)}</mark>${escapeHtml(after)}`;
-    }
-  });
-}
-
-function initFooter() {
+function renderFooter(){
   $('#footerDate').textContent = APP_DATA.feedback.date;
   $('#footerName').textContent = APP_DATA.feedback.name;
   $('#footerEmail').textContent = APP_DATA.feedback.email;
-  const saved = localStorage.getItem('csInterviewPrepFeedback') || '';
-  $('#feedbackText').value = saved;
-  $('#feedbackText').addEventListener('input', (e) => localStorage.setItem('csInterviewPrepFeedback', e.target.value));
+  $('#footerEmailLink').href = 'mailto:' + APP_DATA.feedback.email;
+  $('#feedbackText').value = localStorage.getItem(FEEDBACK_KEY) || '';
+  $('#feedbackText').oninput = e => localStorage.setItem(FEEDBACK_KEY, e.target.value);
+}
+function bindGlobal(){
+  $('#menuBtn').onclick = ()=> $('#sidebar').classList.toggle('open');
+  $('#resetBtn').onclick = ()=> { if(confirm('Reset saved progress and feedback?')){ localStorage.removeItem(STORAGE_KEY); localStorage.removeItem(FEEDBACK_KEY); location.reload(); } };
 }
 
-function initEvents() {
-  $all('.nav-btn').forEach(btn => btn.addEventListener('click', () => switchSection(btn.dataset.section)));
-  $all('.quick-nav').forEach(btn => btn.addEventListener('click', () => switchSection(btn.dataset.target)));
-  $('#mobileMenu').addEventListener('click', () => $('#sidebar').classList.toggle('open'));
-  $('#resetProgress').addEventListener('click', resetProgress);
-  $('#globalSearch').addEventListener('input', applySearch);
-
-  $all('.tech-tab').forEach(btn => btn.addEventListener('click', () => { state.tech = btn.dataset.tech; renderTech(); }));
-  $('#flashcardCategory').addEventListener('change', (e) => { state.flashcat = e.target.value; state.flashIndex = 0; renderFlashcard(); });
-  $('#flashcard').addEventListener('click', () => $('#flashcard').classList.toggle('flipped'));
-  $('#prevCard').addEventListener('click', () => { state.flashIndex -= 1; renderFlashcard(); });
-  $('#nextCard').addEventListener('click', () => { state.flashIndex += 1; renderFlashcard(); });
-  $('#markRevised').addEventListener('click', () => { state.progress.revisedCards = (state.progress.revisedCards || 0) + 1; saveProgress(); updateStats(); });
-
-  ['analytical', 'logical'].forEach(kind => {
-    $(`#${kind}TopicFilter`).addEventListener('change', e => { state[`${kind}Filters`].topic = e.target.value; });
-    $(`#${kind}LevelFilter`).addEventListener('change', e => { state[`${kind}Filters`].level = e.target.value; });
-    $(`#${kind}CompanyFilter`).addEventListener('change', e => { state[`${kind}Filters`].company = e.target.value; });
-    $(`#refresh${kind.charAt(0).toUpperCase() + kind.slice(1)}`).addEventListener('click', () => renderPractice(kind));
-  });
-  $('#submitAnalytical').addEventListener('click', () => evaluateQuiz(state.analyticalSet, 'analytical_q', $('#analyticalResult'), 'analytical_practice'));
-  $('#submitLogical').addEventListener('click', () => evaluateQuiz(state.logicalSet, 'logical_q', $('#logicalResult'), 'logical_practice'));
-
-  $('#mockSelector').addEventListener('change', (e) => { state.currentMock = e.target.value; renderMock(); });
-  $('#submitMock').addEventListener('click', () => {
-    clearInterval(state.mockTimer);
-    const mock = APP_DATA.mockTests.find(t => t.id === state.currentMock);
-    evaluateQuiz(mock.questions, 'mock_q', $('#mockResult'), mock.id);
-  });
-
-  $('#companySelector').addEventListener('change', (e) => { state.currentCompany = e.target.value; renderCompanyTest(); });
-  $('#submitCompany').addEventListener('click', () => {
-    clearInterval(state.companyTimer);
-    const test = APP_DATA.companyTests.find(t => t.id === state.currentCompany);
-    evaluateQuiz(test.questions, 'company_q', $('#companyResult'), test.id);
-  });
+function init(){
+  renderNav(); renderDashboard(); renderRoadmap(); renderPractice('analytical'); renderPractice('logical'); renderTechnical(); renderFlashcards(); renderMocktests(); renderVideos(); renderResume(); renderHR(); renderTasks(); renderCompany(); renderFooter(); bindGlobal(); switchPage(state.currentPage);
 }
-
-function init() {
-  renderDashboard();
-  renderRoadmap();
-  renderAnalyticalOverview();
-  renderLogicalOverview();
-  renderTech();
-  renderFlashcardCategories();
-  renderFlashcard();
-  renderMockSelector();
-  renderMock();
-  renderVideos();
-  renderResume();
-  renderHR();
-  renderTasks();
-  renderCompanySelector();
-  renderCompanyTest();
-  populateQuestionFilters('analytical', APP_DATA.analyticalQuestions);
-  populateQuestionFilters('logical', APP_DATA.logicalQuestions);
-  renderPractice('analytical');
-  renderPractice('logical');
-  bindCheckboxPersistence();
-  initFooter();
-  initEvents();
-  updateStats();
-}
-
 document.addEventListener('DOMContentLoaded', init);

@@ -6,306 +6,63 @@
   <title>CS Interview Prep Pro</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="app-shell">
+  <div class="shell">
     <aside class="sidebar" id="sidebar">
       <div class="brand">
-        <div class="brand-mark">&lt;/&gt;</div>
+        <div class="brand-icon">&lt;/&gt;</div>
         <div>
           <h1>CS Interview Prep</h1>
-          <p>Pro UI Edition</p>
+          <p>Professional fresher toolkit</p>
         </div>
       </div>
-
-      <div class="profile-card glass">
-        <div class="profile-title">Career Launch Dashboard</div>
-        <div class="profile-sub">For CS freshers preparing for aptitude, coding, HR, resume, and company-specific rounds.</div>
-      </div>
-
-      <nav class="nav-links">
-        <button class="nav-btn active" data-section="dashboard">Dashboard</button>
-        <button class="nav-btn" data-section="roadmap">Roadmap</button>
-        <button class="nav-btn" data-section="analytical">Analytical</button>
-        <button class="nav-btn" data-section="logical">Logical</button>
-        <button class="nav-btn" data-section="technical">Technical</button>
-        <button class="nav-btn" data-section="flashcards">Flashcards</button>
-        <button class="nav-btn" data-section="mocks">Mock Tests</button>
-        <button class="nav-btn" data-section="videos">Videos</button>
-        <button class="nav-btn" data-section="resume">Resume Strategy</button>
-        <button class="nav-btn" data-section="hr">HR & Soft Skills</button>
-        <button class="nav-btn" data-section="tasks">Task Tracker</button>
-        <button class="nav-btn" data-section="company">Company Tests</button>
-      </nav>
-
-      <div class="sidebar-footer glass">
-        <div class="tiny-label">Folder</div>
-        <div class="mono">CS-interview-prep</div>
+      <nav id="nav"></nav>
+      <div class="side-card">
+        <div class="eyebrow">Focus today</div>
+        <h3>Execution over reading</h3>
+        <p>Solve one MCQ set, revise flashcards, and improve one resume bullet.</p>
       </div>
     </aside>
 
-    <main class="main-content">
-      <header class="topbar glass">
+    <main class="content">
+      <header class="topbar">
         <div>
-          <button class="mobile-menu" id="mobileMenu">☰</button>
-          <div class="eyebrow">GitHub-ready standalone app</div>
-          <h2 id="sectionTitle">Dashboard</h2>
+          <div class="eyebrow">Pro UI</div>
+          <h2 id="pageTitle">Dashboard</h2>
         </div>
         <div class="top-actions">
-          <input id="globalSearch" type="text" placeholder="Search topics, skills, questions..." />
-          <button class="secondary-btn" id="resetProgress">Reset Progress</button>
+          <button class="btn btn-secondary" id="menuBtn">Menu</button>
+          <button class="btn" id="resetBtn">Reset Progress</button>
         </div>
       </header>
 
-      <section id="dashboard" class="content-section active">
-        <div class="hero glass">
-          <div class="hero-copy">
-            <span class="badge">Placement Ready</span>
-            <h3>Master aptitude, coding, HR, and resume storytelling in one place.</h3>
-            <p>Built for CS freshers targeting service companies, startups, and product firms. Practice 220+ MCQs, solve 25 timed mocks, and take company-style tests for GOOG, MSFT, AMD, NVIDIA, TCS, and Infosys.</p>
-            <div class="hero-actions">
-              <button class="primary-btn quick-nav" data-target="roadmap">Start Roadmap</button>
-              <button class="secondary-btn quick-nav" data-target="mocks">Take Mock Test</button>
-            </div>
-          </div>
-          <div class="hero-stats">
-            <div class="stat-card"><span>Overall Progress</span><strong id="overallProgress">0%</strong></div>
-            <div class="stat-card"><span>Cards Revised</span><strong id="cardsRevisedCount">0</strong></div>
-            <div class="stat-card"><span>Tests Attempted</span><strong id="testsAttemptedCount">0</strong></div>
-            <div class="stat-card"><span>Tasks Completed</span><strong id="tasksCompletedCount">0</strong></div>
-          </div>
-        </div>
+      <section id="dashboard" class="page active"></section>
+      <section id="roadmap" class="page"></section>
+      <section id="analytical" class="page"></section>
+      <section id="logical" class="page"></section>
+      <section id="technical" class="page"></section>
+      <section id="flashcards" class="page"></section>
+      <section id="mocktests" class="page"></section>
+      <section id="videos" class="page"></section>
+      <section id="resume" class="page"></section>
+      <section id="hr" class="page"></section>
+      <section id="tasks" class="page"></section>
+      <section id="company" class="page"></section>
 
-        <div class="dashboard-grid">
-          <div class="panel glass">
-            <div class="panel-head"><h4>Today’s Focus</h4></div>
-            <div id="todayFocus" class="stack-list"></div>
-          </div>
-          <div class="panel glass">
-            <div class="panel-head"><h4>Preparation Modules</h4></div>
-            <div class="module-grid" id="moduleGrid"></div>
-          </div>
-          <div class="panel glass full-span">
-            <div class="panel-head"><h4>Coverage Snapshot</h4></div>
-            <div class="pill-row">
-              <span class="pill">120 Analytical MCQs</span>
-              <span class="pill">100 Logical MCQs</span>
-              <span class="pill">25 Timed Mocks</span>
-              <span class="pill">6 Company Tests</span>
-              <span class="pill">Resume + HR Strategy</span>
-              <span class="pill">Direct Video Links</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="roadmap" class="content-section">
-        <div class="panel glass">
-          <div class="panel-head"><h4>6-Week Placement Roadmap</h4></div>
-          <div id="roadmapGrid" class="roadmap-grid"></div>
-        </div>
-      </section>
-
-      <section id="analytical" class="content-section">
-        <div class="split-grid">
-          <div class="panel glass">
-            <div class="panel-head"><h4>Concept Capsules</h4></div>
-            <div id="analyticalConcepts" class="accordion-list"></div>
-          </div>
-          <div class="panel glass">
-            <div class="panel-head"><h4>Formula Board</h4></div>
-            <div id="formulaBoard" class="formula-board"></div>
-          </div>
-        </div>
-        <div class="panel glass top-gap">
-          <div class="panel-head wrap-head">
-            <div>
-              <h4>Analytical Practice Bank</h4>
-              <div class="subtle" id="analyticalCount"></div>
-            </div>
-            <div class="row-actions">
-              <select id="analyticalTopicFilter"></select>
-              <select id="analyticalLevelFilter"></select>
-              <select id="analyticalCompanyFilter"></select>
-              <button class="secondary-btn" id="refreshAnalytical">Load Set</button>
-            </div>
-          </div>
-          <form id="analyticalForm" class="mock-form"></form>
-          <div class="mock-actions">
-            <button class="primary-btn" id="submitAnalytical" type="button">Check Answers</button>
-          </div>
-          <div id="analyticalResult" class="mock-result"></div>
-        </div>
-      </section>
-
-      <section id="logical" class="content-section">
-        <div class="panel glass">
-          <div class="panel-head"><h4>Logical Reasoning Packs</h4></div>
-          <div id="logicalPacks" class="card-grid"></div>
-        </div>
-        <div class="panel glass top-gap">
-          <div class="panel-head wrap-head">
-            <div>
-              <h4>Logical Practice Bank</h4>
-              <div class="subtle" id="logicalCount"></div>
-            </div>
-            <div class="row-actions">
-              <select id="logicalTopicFilter"></select>
-              <select id="logicalLevelFilter"></select>
-              <select id="logicalCompanyFilter"></select>
-              <button class="secondary-btn" id="refreshLogical">Load Set</button>
-            </div>
-          </div>
-          <form id="logicalForm" class="mock-form"></form>
-          <div class="mock-actions">
-            <button class="primary-btn" id="submitLogical" type="button">Check Answers</button>
-          </div>
-          <div id="logicalResult" class="mock-result"></div>
-        </div>
-      </section>
-
-      <section id="technical" class="content-section">
-        <div class="tech-tabs">
-          <button class="tech-tab active" data-tech="cpp">C++</button>
-          <button class="tech-tab" data-tech="python">Python</button>
-          <button class="tech-tab" data-tech="perl">Perl</button>
-        </div>
-        <div class="panel glass">
-          <div class="panel-head"><h4 id="techTitle">C++ Interview Prep</h4></div>
-          <div id="techContent"></div>
-        </div>
-      </section>
-
-      <section id="flashcards" class="content-section">
-        <div class="panel glass">
-          <div class="panel-head">
-            <h4>Smart Revision Flashcards</h4>
-            <div class="row-actions">
-              <select id="flashcardCategory"></select>
-              <button class="secondary-btn" id="markRevised">Mark Revised</button>
-            </div>
-          </div>
-          <div class="flashcard-wrap">
-            <div class="flashcard" id="flashcard">
-              <div class="flashcard-inner" id="flashcardInner">
-                <div class="flashcard-face flashcard-front">
-                  <span class="badge small" id="flashcardBadge">Topic</span>
-                  <h4 id="flashcardQuestion">Question</h4>
-                  <p>Click the card to flip.</p>
-                </div>
-                <div class="flashcard-face flashcard-back">
-                  <h4>Answer</h4>
-                  <p id="flashcardAnswer"></p>
-                </div>
-              </div>
-            </div>
-            <div class="flash-actions">
-              <button class="secondary-btn" id="prevCard">Previous</button>
-              <button class="primary-btn" id="nextCard">Next</button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="mocks" class="content-section">
-        <div class="panel glass">
-          <div class="panel-head wrap-head">
-            <div>
-              <h4>Interactive Mock Tests</h4>
-              <div class="subtle">25 mock tests • 25 questions each • 30-minute timer</div>
-            </div>
-            <div class="row-actions">
-              <select id="mockSelector"></select>
-              <div class="timer-chip" id="mockTimer">30:00</div>
-            </div>
-          </div>
-          <div id="mockMeta" class="mock-meta"></div>
-          <form id="mockForm" class="mock-form"></form>
-          <div class="mock-actions">
-            <button class="primary-btn" id="submitMock" type="button">Submit Test</button>
-          </div>
-          <div id="mockResult" class="mock-result"></div>
-        </div>
-      </section>
-
-      <section id="videos" class="content-section">
-        <div class="panel glass">
-          <div class="panel-head"><h4>Direct Video Shelf</h4></div>
-          <div id="videoGrid" class="stack-list"></div>
-        </div>
-      </section>
-
-      <section id="resume" class="content-section">
-        <div class="split-grid">
-          <div class="panel glass">
-            <div class="panel-head"><h4>Resume Upgrade Strategy</h4></div>
-            <div id="resumeChecklist" class="checklist"></div>
-          </div>
-          <div class="panel glass">
-            <div class="panel-head"><h4>Strong Bullet Samples</h4></div>
-            <div id="resumeBullets" class="stack-list"></div>
-          </div>
-        </div>
-      </section>
-
-      <section id="hr" class="content-section">
-        <div class="panel glass">
-          <div class="panel-head"><h4>HR & Behavioral Prep</h4></div>
-          <div id="hrGrid" class="card-grid"></div>
-        </div>
-      </section>
-
-      <section id="tasks" class="content-section">
-        <div class="split-grid">
-          <div class="panel glass">
-            <div class="panel-head"><h4>Daily Action Tracker</h4></div>
-            <div id="taskList" class="checklist"></div>
-          </div>
-          <div class="panel glass">
-            <div class="panel-head"><h4>Interview Day Readiness</h4></div>
-            <div id="interviewDayChecklist" class="checklist"></div>
-          </div>
-        </div>
-      </section>
-
-      <section id="company" class="content-section">
-        <div class="panel glass">
-          <div class="panel-head wrap-head">
-            <div>
-              <h4>Company-Style Mini Tests</h4>
-              <div class="subtle">Dropdown includes GOOG, MSFT, AMD, NVIDIA, TCS, Infosys.</div>
-            </div>
-            <div class="row-actions">
-              <select id="companySelector"></select>
-              <div class="timer-chip small-chip" id="companyTimer">20:00</div>
-            </div>
-          </div>
-          <div id="companyIntro" class="company-intro"></div>
-          <form id="companyForm" class="mock-form"></form>
-          <div class="mock-actions">
-            <button class="primary-btn" id="submitCompany" type="button">Submit Company Test</button>
-          </div>
-          <div id="companyResult" class="mock-result"></div>
-        </div>
-      </section>
-
-      <footer class="app-footer glass">
-        <div>
-          <h4>Feedback / Comments</h4>
-          <p class="subtle">Saved locally in your browser for quick notes while reviewing the app.</p>
-        </div>
-        <textarea id="feedbackText" rows="4" placeholder="Write feedback, improvements, missing topics, or comments..."></textarea>
+      <footer class="footer">
         <div class="footer-meta">
-          <span><strong>Date:</strong> <span id="footerDate"></span></span>
-          <span><strong>Name:</strong> <span id="footerName"></span></span>
-          <span><strong>Email:</strong> <span id="footerEmail"></span></span>
+          <strong>Feedback / Comments</strong>
+          <span>Date: <span id="footerDate"></span></span>
+          <span>Name: <span id="footerName"></span></span>
+          <span>Email: <a id="footerEmailLink" href="#"><span id="footerEmail"></span></a></span>
         </div>
+        <textarea id="feedbackText" placeholder="Type comments, enhancement ideas, or interview content requests here..."></textarea>
       </footer>
     </main>
   </div>
-
   <script src="data.js"></script>
   <script src="app.js"></script>
 </body>

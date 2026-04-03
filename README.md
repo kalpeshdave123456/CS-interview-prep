@@ -1,18 +1,14 @@
-# CS Interview Prep Pro
+# CS Interview Prep
 
-Static GitHub Pages app for CS fresher interview preparation.
+Professional GitHub Pages-ready interview preparation app for CS freshers.
 
-## Included
-- 120 analytical MCQs with explanations
-- 100 logical MCQs with explanations
-- 25 mock tests with 25 questions each and 30-minute timer
-- company-style mini tests for GOOG, MSFT, AMD, NVIDIA, TCS, Infosys
-- direct YouTube links by category
-- flashcards, roadmap, resume strategy, HR prep, and task tracker
-- local browser persistence for progress and feedback notes
+## Features
+- 200 analytical MCQs with explanations
+- 200 logical MCQs with explanations
+- 25 mock tests, each 25 questions and 30 minutes
+- Company mini-tests for GOOG, MSFT, AMD, NVIDIA, TCS, Infosys
+- C++, Python, Perl prep
+- Flashcards, videos, resume strategy, HR prep, and task tracking
 
-## Run locally
-Open `index.html` directly in a browser, or serve the folder with a simple local server.
-
-## GitHub Pages
-Upload the contents of this folder to the repo root and enable Pages for the branch/root.
+## Run
+Open `index.html` directly, or host on GitHub Pages.
