@@ -22,7 +22,7 @@
 
       <div class="profile-card glass">
         <div class="profile-title">Career Launch Dashboard</div>
-        <div class="profile-sub">For CS freshers preparing for coding, aptitude, HR, and resume rounds.</div>
+        <div class="profile-sub">For CS freshers preparing for aptitude, coding, HR, resume, and company-specific rounds.</div>
       </div>
 
       <nav class="nav-links">
@@ -64,58 +64,38 @@
           <div class="hero-copy">
             <span class="badge">Placement Ready</span>
             <h3>Master aptitude, coding, HR, and resume storytelling in one place.</h3>
-            <p>Built for CS freshers targeting service companies, startups, and product firms. Track progress, revise fast, and practice real interview patterns.</p>
+            <p>Built for CS freshers targeting service companies, startups, and product firms. Practice 220+ MCQs, solve 25 timed mocks, and take company-style tests for GOOG, MSFT, AMD, NVIDIA, TCS, and Infosys.</p>
             <div class="hero-actions">
               <button class="primary-btn quick-nav" data-target="roadmap">Start Roadmap</button>
               <button class="secondary-btn quick-nav" data-target="mocks">Take Mock Test</button>
             </div>
           </div>
           <div class="hero-stats">
-            <div class="stat-card">
-              <span>Overall Progress</span>
-              <strong id="overallProgress">0%</strong>
-            </div>
-            <div class="stat-card">
-              <span>Cards Revised</span>
-              <strong id="cardsRevisedCount">0</strong>
-            </div>
-            <div class="stat-card">
-              <span>Tests Attempted</span>
-              <strong id="testsAttemptedCount">0</strong>
-            </div>
-            <div class="stat-card">
-              <span>Tasks Completed</span>
-              <strong id="tasksCompletedCount">0</strong>
-            </div>
+            <div class="stat-card"><span>Overall Progress</span><strong id="overallProgress">0%</strong></div>
+            <div class="stat-card"><span>Cards Revised</span><strong id="cardsRevisedCount">0</strong></div>
+            <div class="stat-card"><span>Tests Attempted</span><strong id="testsAttemptedCount">0</strong></div>
+            <div class="stat-card"><span>Tasks Completed</span><strong id="tasksCompletedCount">0</strong></div>
           </div>
         </div>
 
         <div class="dashboard-grid">
           <div class="panel glass">
-            <div class="panel-head">
-              <h4>Today’s Focus</h4>
-            </div>
+            <div class="panel-head"><h4>Today’s Focus</h4></div>
             <div id="todayFocus" class="stack-list"></div>
           </div>
-
           <div class="panel glass">
-            <div class="panel-head">
-              <h4>Preparation Modules</h4>
-            </div>
+            <div class="panel-head"><h4>Preparation Modules</h4></div>
             <div class="module-grid" id="moduleGrid"></div>
           </div>
-
           <div class="panel glass full-span">
-            <div class="panel-head">
-              <h4>Interview Performance Formula</h4>
-            </div>
+            <div class="panel-head"><h4>Coverage Snapshot</h4></div>
             <div class="pill-row">
-              <span class="pill">Aptitude Speed</span>
-              <span class="pill">Coding Fluency</span>
-              <span class="pill">Resume Clarity</span>
-              <span class="pill">Project Storytelling</span>
-              <span class="pill">Mock Practice</span>
-              <span class="pill">HR Confidence</span>
+              <span class="pill">120 Analytical MCQs</span>
+              <span class="pill">100 Logical MCQs</span>
+              <span class="pill">25 Timed Mocks</span>
+              <span class="pill">6 Company Tests</span>
+              <span class="pill">Resume + HR Strategy</span>
+              <span class="pill">Direct Video Links</span>
             </div>
           </div>
         </div>
@@ -139,12 +119,50 @@
             <div id="formulaBoard" class="formula-board"></div>
           </div>
         </div>
+        <div class="panel glass top-gap">
+          <div class="panel-head wrap-head">
+            <div>
+              <h4>Analytical Practice Bank</h4>
+              <div class="subtle" id="analyticalCount"></div>
+            </div>
+            <div class="row-actions">
+              <select id="analyticalTopicFilter"></select>
+              <select id="analyticalLevelFilter"></select>
+              <select id="analyticalCompanyFilter"></select>
+              <button class="secondary-btn" id="refreshAnalytical">Load Set</button>
+            </div>
+          </div>
+          <form id="analyticalForm" class="mock-form"></form>
+          <div class="mock-actions">
+            <button class="primary-btn" id="submitAnalytical" type="button">Check Answers</button>
+          </div>
+          <div id="analyticalResult" class="mock-result"></div>
+        </div>
       </section>
 
       <section id="logical" class="content-section">
         <div class="panel glass">
           <div class="panel-head"><h4>Logical Reasoning Packs</h4></div>
           <div id="logicalPacks" class="card-grid"></div>
+        </div>
+        <div class="panel glass top-gap">
+          <div class="panel-head wrap-head">
+            <div>
+              <h4>Logical Practice Bank</h4>
+              <div class="subtle" id="logicalCount"></div>
+            </div>
+            <div class="row-actions">
+              <select id="logicalTopicFilter"></select>
+              <select id="logicalLevelFilter"></select>
+              <select id="logicalCompanyFilter"></select>
+              <button class="secondary-btn" id="refreshLogical">Load Set</button>
+            </div>
+          </div>
+          <form id="logicalForm" class="mock-form"></form>
+          <div class="mock-actions">
+            <button class="primary-btn" id="submitLogical" type="button">Check Answers</button>
+          </div>
+          <div id="logicalResult" class="mock-result"></div>
         </div>
       </section>
 
@@ -175,7 +193,7 @@
                 <div class="flashcard-face flashcard-front">
                   <span class="badge small" id="flashcardBadge">Topic</span>
                   <h4 id="flashcardQuestion">Question</h4>
-                  <p>Click card to flip</p>
+                  <p>Click the card to flip.</p>
                 </div>
                 <div class="flashcard-face flashcard-back">
                   <h4>Answer</h4>
@@ -193,9 +211,15 @@
 
       <section id="mocks" class="content-section">
         <div class="panel glass">
-          <div class="panel-head">
-            <h4>Interactive Mock Tests</h4>
-            <select id="mockSelector"></select>
+          <div class="panel-head wrap-head">
+            <div>
+              <h4>Interactive Mock Tests</h4>
+              <div class="subtle">25 mock tests • 25 questions each • 30-minute timer</div>
+            </div>
+            <div class="row-actions">
+              <select id="mockSelector"></select>
+              <div class="timer-chip" id="mockTimer">30:00</div>
+            </div>
           </div>
           <div id="mockMeta" class="mock-meta"></div>
           <form id="mockForm" class="mock-form"></form>
@@ -208,8 +232,8 @@
 
       <section id="videos" class="content-section">
         <div class="panel glass">
-          <div class="panel-head"><h4>Curated Video Shelf</h4></div>
-          <div id="videoGrid" class="card-grid"></div>
+          <div class="panel-head"><h4>Direct Video Shelf</h4></div>
+          <div id="videoGrid" class="stack-list"></div>
         </div>
       </section>
 
@@ -248,9 +272,15 @@
 
       <section id="company" class="content-section">
         <div class="panel glass">
-          <div class="panel-head">
-            <h4>Company-Style Mini Tests</h4>
-            <select id="companySelector"></select>
+          <div class="panel-head wrap-head">
+            <div>
+              <h4>Company-Style Mini Tests</h4>
+              <div class="subtle">Dropdown includes GOOG, MSFT, AMD, NVIDIA, TCS, Infosys.</div>
+            </div>
+            <div class="row-actions">
+              <select id="companySelector"></select>
+              <div class="timer-chip small-chip" id="companyTimer">20:00</div>
+            </div>
           </div>
           <div id="companyIntro" class="company-intro"></div>
           <form id="companyForm" class="mock-form"></form>
@@ -260,6 +290,19 @@
           <div id="companyResult" class="mock-result"></div>
         </div>
       </section>
+
+      <footer class="app-footer glass">
+        <div>
+          <h4>Feedback / Comments</h4>
+          <p class="subtle">Saved locally in your browser for quick notes while reviewing the app.</p>
+        </div>
+        <textarea id="feedbackText" rows="4" placeholder="Write feedback, improvements, missing topics, or comments..."></textarea>
+        <div class="footer-meta">
+          <span><strong>Date:</strong> <span id="footerDate"></span></span>
+          <span><strong>Name:</strong> <span id="footerName"></span></span>
+          <span><strong>Email:</strong> <span id="footerEmail"></span></span>
+        </div>
+      </footer>
     </main>
   </div>
 
