@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CS Interview Prep</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">&lt;/&gt;</div>
+        <div>
+          <h1>CS Interview Prep</h1>
+          <p>Fresher launchpad</p>
+        </div>
+      </div>
+
+      <nav id="navMenu" class="nav-menu"></nav>
+
+      <div class="sidebar-footer">
+        <div class="mini-card">
+          <p class="eyebrow">Focus today</p>
+          <h3 id="dailyFocusTitle">Build confidence</h3>
+          <p id="dailyFocusText">Solve one aptitude set, revise flashcards, and polish one resume bullet.</p>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Career Portal</p>
+          <h2 id="pageTitle">Dashboard</h2>
+        </div>
+        <div class="top-actions">
+          <button id="resetProgressBtn" class="btn btn-secondary">Reset Progress</button>
+        </div>
+      </header>
+
+      <section id="page-dashboard" class="page active"></section>
+      <section id="page-roadmap" class="page"></section>
+      <section id="page-aptitude" class="page"></section>
+      <section id="page-logic" class="page"></section>
+      <section id="page-technical" class="page"></section>
+      <section id="page-flashcards" class="page"></section>
+      <section id="page-mock-tests" class="page"></section>
+      <section id="page-videos" class="page"></section>
+      <section id="page-resume" class="page"></section>
+      <section id="page-hr" class="page"></section>
+      <section id="page-tasks" class="page"></section>
+      <section id="page-company" class="page"></section>
+    </main>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
